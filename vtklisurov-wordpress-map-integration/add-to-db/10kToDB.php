@@ -10,17 +10,15 @@
        echo ("Connection failed");
    }
 
-   for ($j=2; $j <11 ; $j++) {
 
-   $file = '10kBiggest' . $j . '.json';
+   $file = 'wp-content/plugins/map-integration/add-to-db/10kBiggest.json';
 
 
    $content = file_get_contents($file);
    $result = json_decode($content);
 
-   for ($i=0; $i < 5; $i++)
+   for ($i=0; $i < 10000; $i++)
    {
-     //$i = 0;
 
      $result->records[$i]->fields->name = str_replace("'","''",$result->records[$i]->fields->name);
      $result->records[$i]->fields->admin1_code = str_replace("'","''",$result->records[$i]->fields->admin1_code);
@@ -120,7 +118,6 @@
 
      $sql = $sqlcol . $sqlval;
 
-     //echo($sql);
 
      if ($dbcon->query($sql) !== TRUE) {
        echo "Error: " . $sql . "<br>" . $dbcon->error;
@@ -128,7 +125,7 @@
 
    }
 
- }
+
 ?>
 </body>
 <html>

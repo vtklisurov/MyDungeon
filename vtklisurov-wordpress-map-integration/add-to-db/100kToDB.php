@@ -10,13 +10,9 @@
        echo ("Connection failed");
    }
 
-   //for ($j=2; $j <11 ; $j++) {
 
    $file = '/var/lib/mysql-files/CSVCities.csv';
 
-
-   //$content = file_get_contents($file);
-   //$result = json_decode($content);
 
  $sql = "
       LOAD DATA INFILE '/var/lib/mysql-files/CSVCities.csv'
@@ -30,15 +26,10 @@
           admin3_code=NULLIF(@admin3_code, ''),
           admin4_code=NULLIF(@admin4_code, '');";
 
-//echo($sql);
-
      if ($dbcon->query($sql) !== TRUE) {
        echo "Error: " . $sql . "<br>" . $dbcon->error;
      }
 
-  // }
-
-// }
 ?>
 </body>
 <html>

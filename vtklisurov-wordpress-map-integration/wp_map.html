@@ -6,37 +6,86 @@
     <title>Wordpress map</title>
     <style>
      #map {
-        height: 600px;
-	width: 100%;
+        height: 800px;
+	      width: 100%;
+
       }
       html, body {
         height: 100%;
-	width: 100%;
+	      width: 100%;
         margin: 0;
         padding: 0;
       }
+
+  form {
+  margin: 0 auto;
+  width: 350px;
+  padding: 1em;
+  border: 1px solid #CCC;
+  border-radius: 1em;
+}
+
+form div + div {
+  margin-top: 1em;
+}
+
+label {
+  display: inline-block;
+  width: 250px;
+  text-align: left;
+}
+
+input, textarea {
+  font: 1em sans-serif;
+  width: 300px;
+  box-sizing: border-box;
+  border: 1px solid #999;
+}
+
+input:focus, textarea:focus {
+  border-color: #000;
+}
+
+
+textarea {
+  vertical-align: top;
+  height: 5em;
+}
+
+.button {
+  padding-left: 100px;
+}
+
+button {
+  margin-left: .5em;
+}
+
     </style>
   </head>
   <body>
     <div id="map"></div>
 
     <script>
+    var map;
+    var markersArr = [];
+    var infoWindow;
         function initMap()
         {
-          var map = new google.maps.Map(document.getElementById('map'),
+          map = new google.maps.Map(document.getElementById('map'),
           {
             center: new google.maps.LatLng(20, 0),
-            zoom: 1.7,
+            zoom: 2.4,
             disableDefaultUI: true
           });
-          var infoWindow = new google.maps.InfoWindow;
+          infoWindow = new google.maps.InfoWindow;
 
-          downloadUrl('http://localhost/outputXML.xml', function(data)
+          downloadUrl('http://localhost/wp-content/plugins/map-integration/outputXML.php', function(data)
           {
             var xml = data.responseXML;
-            var markers = xml.documentElement.getElementsByTagName('marker');
+            markers = xml.documentElement.getElementsByTagName('marker');
             Array.prototype.forEach.call(markers, function(markerElem)
             {
+
               var id = markerElem.getAttribute('id');
               var name = markerElem.getAttribute('name');
               var point = new google.maps.LatLng(
@@ -54,6 +103,7 @@
                 map: map,
                 position: point,
               });
+              markersArr.push(marker);
               marker.addListener('click', function()
               {
                 infoWindow.setContent(infowincontent);
@@ -80,7 +130,119 @@
       }
 
       function doNothing() {}
+
+      function setMapOnAll(map) {
+        for (var i = 0; i < markersArr.length; i++) {
+          markersArr[i].setMap(map);
+        }
+      }
+
+      function deleteMarkers() {
+        setMapOnAll(null);
+        markersArr = [];
+      }
+
+
+      function checkCoords(point1, point2, lat, lng)
+      {
+        if(point1[0] == "" ||  point1[1] == "" ||  point2[0] == "" ||  point2[1] == "") return true;
+        if(lat<Math.max(point1[0], point2[0]) && lat>Math.min(point1[0], point2[0]) && lng<Math.max(point1[1], point2[1]) && lng>Math.min(point1[1], point2[1])) return true;
+        return false;
+      }
+
+      function newMarkers()
+      {
+        deleteMarkers();
+        downloadUrl('http://localhost/wp-content/plugins/map-integration/outputXML.php', function(data)
+        {
+          var cname = document.forms["filter"]["city_name"].value;
+          var ccountry = document.forms["filter"]["city_country"].value;
+          var ctimezone = document.forms["filter"]["city_timezone"].value;
+          var point1 = [document.forms["filter"]["lat1"].value, document.forms["filter"]["lng1"].value];
+          var point2 = [document.forms["filter"]["lat2"].value, document.forms["filter"]["lng2"].value];
+          var xml = data.responseXML;
+          markers = xml.documentElement.getElementsByTagName('marker');
+          Array.prototype.forEach.call(markers, function(markerElem)
+          {
+            if (cname == markerElem.getAttribute('name') || cname == "")
+            {
+              if (ccountry == markerElem.getAttribute('country') || ccountry == "")
+              {
+                if (ctimezone == markerElem.getAttribute('timezone') || ctimezone == "")
+                {
+                  if (checkCoords(point1, point2, markerElem.getAttribute('lat'), markerElem.getAttribute('lng')))
+                  {
+                    var id = markerElem.getAttribute('id');
+                    var name = markerElem.getAttribute('name');
+                    var point = new google.maps.LatLng(
+                        parseFloat(markerElem.getAttribute('lat')),
+                        parseFloat(markerElem.getAttribute('lng')));
+
+                    var infowincontent = document.createElement('div');
+                    var strong = document.createElement('strong');
+                    strong.textContent = name
+                    infowincontent.appendChild(strong);
+                    infowincontent.appendChild(document.createElement('br'));
+
+                    var marker = new google.maps.Marker
+                    ({
+                      map: map,
+                      position: point,
+                    });
+                    markersArr.push(marker);
+                    marker.addListener('click', function()
+                    {
+                      infoWindow.setContent(infowincontent);
+                      infoWindow.open(map, marker);
+                    });
+                  }
+                }
+              }
+            }
+          });
+        });
+
+      }
+
+
     </script>
+    <form name="filter" action="/wp-content/plugins/map-integration/outputXML.php" method="GET" target="dummyframe">
+  <div>
+    <label for="country">Country:</label>
+    <input type="text" id="country" name="city_country">
+  </div>
+  <div>
+    <label for="name">City:</label>
+    <input type="text" id="name" name="city_name">
+  </div>
+  <div>
+    <label for="timezone">Timezone:</label>
+    <input type="text" id="timezone" name="city_timezone">
+  </div>
+  <div>
+    <label for="lat1">First point latitude:</label>
+    <input type="number" step="any" id="lat1" name="city_lat1">
+  </div>
+  <div>
+    <label for="lng1">First point longitude:</label>
+    <input type="number" step="any" id="lng1" name="city_lng1">
+  </div>
+  <div>
+    <label for="lat2">Second point latitude:</label>
+    <input type="number" step="any" id="lat2" name="city_lat2">
+  </div>
+  <div>
+    <label for="lng2">Second point longitude:</label>
+    <input type="number" step="any" id="lng2" name="city_lng2">
+  </div>
+  <div class="button">
+  <button type="submit" onclick="newMarkers()">Filter</button>
+  </div>
+  <div class="button">
+  <button type="reset" onclick="newMarkers()">Reset</button>
+  </div>
+  </form>
+  <iframe width="0" height="0" border="0" name="dummyframe" id="dummyframe" style="display:none"></iframe>
     <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAoaY4TIlQXDHyd5dkFrM5LLiAy9MqZMAA&callback=initMap">
     </script>
