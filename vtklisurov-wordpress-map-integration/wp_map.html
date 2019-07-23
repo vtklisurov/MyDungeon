@@ -3,12 +3,13 @@
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <title>Wordpress map</title>
     <style>
      #map {
-        height: 800px;
+        height: 850px;
 	      width: 100%;
-
+        margin-left: 150px;
       }
       html, body {
         height: 100%;
@@ -17,11 +18,11 @@
         padding: 0;
       }
 
-  form {
-  margin: 0 auto;
+form {
+  margin: auto;
   width: 350px;
   padding: 1em;
-  border: 1px solid #CCC;
+  border: 0px solid #CCC;
   border-radius: 1em;
 }
 
@@ -53,11 +54,24 @@ textarea {
 }
 
 .button {
-  padding-left: 100px;
+  padding-left: 0px;
+  padding-right: 0px;
+  padding-top: 0px;
+  padding-bottom: 0px;
 }
 
 button {
-  margin-left: .5em;
+  margin: auto;
+  line-height: 0px;
+  height: 50px;
+  width:310px;
+}
+
+#by_map {
+  position: absolute;
+  top: 375px;
+  left: 10px;
+  z-index: 99;
 }
 
     </style>
@@ -74,12 +88,12 @@ button {
           map = new google.maps.Map(document.getElementById('map'),
           {
             center: new google.maps.LatLng(20, 0),
-            zoom: 2.4,
+            zoom: 2,
             disableDefaultUI: true
           });
           infoWindow = new google.maps.InfoWindow;
 
-          downloadUrl('http://localhost/wp-content/plugins/map-integration/outputXML.php', function(data)
+          /*downloadUrl('http://localhost/wp-content/plugins/map-integration/outputXML.php', function(data)
           {
             var xml = data.responseXML;
             markers = xml.documentElement.getElementsByTagName('marker');
@@ -110,7 +124,7 @@ button {
                 infoWindow.open(map, marker);
               });
             });
-          });
+          });*/
         }
 
       function downloadUrl(url, callback)
@@ -150,63 +164,50 @@ button {
         return false;
       }
 
-      function newMarkers()
-      {
-        deleteMarkers();
-        downloadUrl('http://localhost/wp-content/plugins/map-integration/outputXML.php', function(data)
-        {
-          var cname = document.forms["filter"]["city_name"].value;
-          var ccountry = document.forms["filter"]["city_country"].value;
-          var ctimezone = document.forms["filter"]["city_timezone"].value;
-          var point1 = [document.forms["filter"]["lat1"].value, document.forms["filter"]["lng1"].value];
-          var point2 = [document.forms["filter"]["lat2"].value, document.forms["filter"]["lng2"].value];
-          var xml = data.responseXML;
-          markers = xml.documentElement.getElementsByTagName('marker');
-          Array.prototype.forEach.call(markers, function(markerElem)
-          {
-            if (cname == markerElem.getAttribute('name') || cname == "")
-            {
-              if (ccountry == markerElem.getAttribute('country') || ccountry == "")
-              {
-                if (ctimezone == markerElem.getAttribute('timezone') || ctimezone == "")
+      $(document).ready(function(){
+        $("#submit").click(function(){
+            $.post(
+              '/wp-content/plugins/map-integration/outputXML.php',
+              $('#filter').serialize(),
+              function(data, status){
+                deleteMarkers();
+                var xml = data
+                markers = xml.documentElement.getElementsByTagName('marker');
+                Array.prototype.forEach.call(markers, function(markerElem)
                 {
-                  if (checkCoords(point1, point2, markerElem.getAttribute('lat'), markerElem.getAttribute('lng')))
+                  var id = markerElem.getAttribute('id');
+                  var name = markerElem.getAttribute('name');
+                  var point = new google.maps.LatLng(
+                    parseFloat(markerElem.getAttribute('lat')),
+                    parseFloat(markerElem.getAttribute('lng')));
+
+                  var infowincontent = document.createElement('div');
+                  var strong = document.createElement('strong');
+                  strong.textContent = name;
+                  infowincontent.appendChild(strong);
+                  infowincontent.appendChild(document.createElement('br'));
+
+                  var marker = new google.maps.Marker
+                  ({
+                    map: map,
+                    position: point,
+                  });
+                  markersArr.push(marker);
+                  marker.addListener('click', function()
                   {
-                    var id = markerElem.getAttribute('id');
-                    var name = markerElem.getAttribute('name');
-                    var point = new google.maps.LatLng(
-                        parseFloat(markerElem.getAttribute('lat')),
-                        parseFloat(markerElem.getAttribute('lng')));
-
-                    var infowincontent = document.createElement('div');
-                    var strong = document.createElement('strong');
-                    strong.textContent = name
-                    infowincontent.appendChild(strong);
-                    infowincontent.appendChild(document.createElement('br'));
-
-                    var marker = new google.maps.Marker
-                    ({
-                      map: map,
-                      position: point,
-                    });
-                    markersArr.push(marker);
-                    marker.addListener('click', function()
-                    {
-                      infoWindow.setContent(infowincontent);
-                      infoWindow.open(map, marker);
-                    });
-                  }
-                }
-              }
-            }
-          });
+                    infoWindow.setContent(infowincontent);
+                    infoWindow.open(map, marker);
+                  });
+              });
         });
+      });
+    });
 
-      }
 
 
     </script>
-    <form name="filter" action="/wp-content/plugins/map-integration/outputXML.php" method="GET" target="dummyframe">
+<div id="by_map">
+    <form name="filter" id="filter" action="/wp-content/plugins/map-integration/outputXML.php" method="GET"  target="dummyframe">
   <div>
     <label for="country">Country:</label>
     <input type="text" id="country" name="city_country">
@@ -236,12 +237,13 @@ button {
     <input type="number" step="any" id="lng2" name="city_lng2">
   </div>
   <div class="button">
-  <button type="submit" onclick="newMarkers()">Filter</button>
+  <button type="button" id="submit">Filter</button>
   </div>
   <div class="button">
-  <button type="reset" onclick="newMarkers()">Reset</button>
+  <button type="reset" onclick="deleteMarkers()">Reset</button>
   </div>
   </form>
+</div>
   <iframe width="0" height="0" border="0" name="dummyframe" id="dummyframe" style="display:none"></iframe>
     <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAoaY4TIlQXDHyd5dkFrM5LLiAy9MqZMAA&callback=initMap">

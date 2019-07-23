@@ -9,7 +9,16 @@
        $db='wp_task';
 
        $dbcon = new mysqli($host,$user,$pass,$db);
-       $sqlget = "select id, name, latitude, longitude, country, timezone, population from map_coords where id < 1000;";
+       $sqlget = "select id, name, latitude, longitude from map_coords where id>0";
+       if($_POST['city_country']!='') $sqlget .= " and country ='" . $_POST['city_country'] . "'";
+       if($_POST['city_name']!='') $sqlget .= " and name ='" . $_POST['city_name'] . "'";
+       if($_POST['city_timezone']!='') $sqlget .= " and timezone = '" . $_POST['city_timezone'] . "'";
+       $lat1 = $_POST['city_lat1'];
+       $lat2 = $_POST['city_lat2'];
+       $lng1 = $_POST['city_lng1'];
+       $lng2 = $_POST['city_lng2'];
+       if($lat1!='' && $lat2!='' && $lng1!='' && $lng2!='') $sqlget .=" and latitude >" . min($lat1,$lat2) . " and latitude <" . max($lat1,$lat2) . " and longitude >" . min($lng1,$lng2) . " and longitude <" . max($lng1,$lng2);
+       $sqlget .= ";";
        $sqldata= $dbcon->query($sqlget);
 
        header("Content-type: text/xml");
@@ -21,9 +30,6 @@
           $newnode->setAttribute("name",$row['name']);
           $newnode->setAttribute("lat", $row['latitude']);
           $newnode->setAttribute("lng", $row['longitude']);
-          $newnode->setAttribute("country", $row['country']);
-          $newnode->setAttribute("timezone", $row['timezone']);
-          $newnode->setAttribute("population", $row['population']);
        }
        ob_clean();
        echo $dom->saveXML();
