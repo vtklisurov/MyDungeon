@@ -11,6 +11,7 @@
 	      width: 100%;
         margin-left: 150px;
       }
+
       html, body {
         height: 100%;
 	      width: 100%;
@@ -18,61 +19,67 @@
         padding: 0;
       }
 
-form {
-  margin: auto;
-  width: 350px;
-  padding: 1em;
-  border: 0px solid #CCC;
-  border-radius: 1em;
-}
+      form {
+        margin: auto;
+        width: 350px;
+        padding: 1em;
+                padding-top: 1px;
+        border: 0px solid #CCC;
+          border-radius: 1em;
+      }
 
-form div + div {
-  margin-top: 1em;
-}
+      form div + div {
+        margin-top: 10px;
+      }
 
-label {
-  display: inline-block;
-  width: 250px;
-  text-align: left;
-}
+      label {
+        display: inline-block;
+        width: 250px;
+        text-align: left;
+      }
 
-input, textarea {
-  font: 1em sans-serif;
-  width: 300px;
-  box-sizing: border-box;
-  border: 1px solid #999;
-}
+      input, textarea {
+        font: 1em sans-serif;
+        width: 300px;
+        box-sizing: border-box;
+        border: 1px solid #999;
+      }
 
-input:focus, textarea:focus {
-  border-color: #000;
-}
+      input:focus, textarea:focus {
+        border-color: #000;
+      }
 
+      textarea {
+        vertical-align: top;
+        height: 5em;
+      }
 
-textarea {
-  vertical-align: top;
-  height: 5em;
-}
+      .button {
+        padding-left: 0px;
+        padding-right: 0px;
+        padding-top: 0px;
+        padding-bottom: 0px;
+      }
 
-.button {
-  padding-left: 0px;
-  padding-right: 0px;
-  padding-top: 0px;
-  padding-bottom: 0px;
-}
+      button {
+        margin: auto;
+        line-height: 0px;
+        height: 50px;
+        width:310px;
+      }
 
-button {
-  margin: auto;
-  line-height: 0px;
-  height: 50px;
-  width:310px;
-}
+      #by_map {
+        position: absolute;
+        top: 350px;
+        left: 10px;
+        z-index: 99;
+      }
 
-#by_map {
-  position: absolute;
-  top: 375px;
-  left: 10px;
-  z-index: 99;
-}
+      #markercnt {
+        position: absolute;
+        top: 1230px;
+        left: 395px;
+      }
 
     </style>
   </head>
@@ -80,9 +87,9 @@ button {
     <div id="map"></div>
 
     <script>
-    var map;
-    var markersArr = [];
-    var infoWindow;
+        var map;
+        var markersArr = [];
+        var infoWindow;
         function initMap()
         {
           map = new google.maps.Map(document.getElementById('map'),
@@ -93,27 +100,26 @@ button {
           });
           infoWindow = new google.maps.InfoWindow;
 
-          /*downloadUrl('http://localhost/wp-content/plugins/map-integration/outputXML.php', function(data)
+        /*downloadUrl('http://localhost/wp-content/plugins/map-integration/outputXML.php', function(data)
           {
             var xml = data.responseXML;
             markers = xml.documentElement.getElementsByTagName('marker');
             Array.prototype.forEach.call(markers, function(markerElem)
             {
-
               var id = markerElem.getAttribute('id');
               var name = markerElem.getAttribute('name');
               var point = new google.maps.LatLng(
-                  parseFloat(markerElem.getAttribute('lat')),
-                  parseFloat(markerElem.getAttribute('lng')));
+                parseFloat(markerElem.getAttribute('lat')),
+                parseFloat(markerElem.getAttribute('lng')));
 
-              var infowincontent = document.createElement('div');
-              var strong = document.createElement('strong');
-              strong.textContent = name
-              infowincontent.appendChild(strong);
-              infowincontent.appendChild(document.createElement('br'));
+                var infowincontent = document.createElement('div');
+                var strong = document.createElement('strong');
+                strong.textContent = name
+                infowincontent.appendChild(strong);
+                infowincontent.appendChild(document.createElement('br'));
 
-              var marker = new google.maps.Marker
-              ({
+                var marker = new google.maps.Marker
+                ({
                 map: map,
                 position: point,
               });
@@ -125,7 +131,7 @@ button {
               });
             });
           });*/
-        }
+      }
 
       function downloadUrl(url, callback)
       {
@@ -154,38 +160,30 @@ button {
       function deleteMarkers() {
         setMapOnAll(null);
         markersArr = [];
+        document.getElementById("cnt").innerHTML = markersArr.length;
       }
 
 
-      function checkCoords(point1, point2, lat, lng)
-      {
-        if(point1[0] == "" ||  point1[1] == "" ||  point2[0] == "" ||  point2[1] == "") return true;
-        if(lat<Math.max(point1[0], point2[0]) && lat>Math.min(point1[0], point2[0]) && lng<Math.max(point1[1], point2[1]) && lng>Math.min(point1[1], point2[1])) return true;
-        return false;
-      }
-
-      $(document).ready(function(){
+    $(document).ready(function(){
+      $("#by_map").load('/wp-content/plugins/map-integration/populate_menu.php', function(){
         $("#submit").click(function(){
             $.post(
               '/wp-content/plugins/map-integration/outputXML.php',
               $('#filter').serialize(),
-              function(data, status){
+              function(data){
                 deleteMarkers();
                 var xml = data
                 markers = xml.documentElement.getElementsByTagName('marker');
-                Array.prototype.forEach.call(markers, function(markerElem)
-                {
+                Array.prototype.forEach.call(markers, function(markerElem){
                   var id = markerElem.getAttribute('id');
                   var name = markerElem.getAttribute('name');
+                  var country = markerElem.getAttribute('country');
                   var point = new google.maps.LatLng(
                     parseFloat(markerElem.getAttribute('lat')),
                     parseFloat(markerElem.getAttribute('lng')));
 
-                  var infowincontent = document.createElement('div');
-                  var strong = document.createElement('strong');
-                  strong.textContent = name;
-                  infowincontent.appendChild(strong);
-                  infowincontent.appendChild(document.createElement('br'));
+                  var contentstr="<div><b>" + name + ", " + country + "\n</b></div>"
+                    + "<div><b>Coordinates: " + markerElem.getAttribute('lat') + " " + markerElem.getAttribute('lng') + "\n</b></div>";
 
                   var marker = new google.maps.Marker
                   ({
@@ -193,21 +191,31 @@ button {
                     position: point,
                   });
                   markersArr.push(marker);
+                  document.getElementById("cnt").innerHTML = markersArr.length;
                   marker.addListener('click', function()
                   {
-                    infoWindow.setContent(infowincontent);
+                    infoWindow.setContent(contentstr);
                     infoWindow.open(map, marker);
                   });
               });
+            });
+            document.getElementById("cnt").innerHTML = markersArr.length;
+          });
         });
-      });
     });
 
-
-
     </script>
+    <div id="markercnt">
+    <p style="margin: 0; display: inline;">Marker count: </p>
+    <p id="cnt" style="margin: 0; display: inline;" align="right"></p>
+    </div>
+    <script>
+    document.getElementById("cnt").innerHTML = markersArr.length;
+    </script>
+
 <div id="by_map">
-    <form name="filter" id="filter" action="/wp-content/plugins/map-integration/outputXML.php" method="GET"  target="dummyframe">
+
+    <!--<form name="filter" id="filter" action="/wp-content/plugins/map-integration/outputXML.php" method="GET"  target="dummyframe">
   <div>
     <label for="country">Country:</label>
     <input type="text" id="country" name="city_country">
@@ -219,6 +227,29 @@ button {
   <div>
     <label for="timezone">Timezone:</label>
     <input type="text" id="timezone" name="city_timezone">
+  </div>
+  <div>
+    <label for="type">Type:</label>
+    <select name="city_type">
+      <option>ANY</option>
+      <option>PPL</option>
+      <option>PPLA</option>
+      <option>PPLA2</option>
+      <option>PPLA3</option>
+      <option>PPLA4</option>
+      <option>PPLC</option>
+      <option>PPLCH</option>
+      <option>PPLF</option>
+      <option>PPLG</option>
+      <option>PPLH</option>
+      <option>PPLL</option>
+      <option>PPLQ</option>
+      <option>PPLR</option>
+      <option>PPLS</option>
+      <option>PPLW</option>
+      <option>PPLX</option>
+      <option>STLMT</option>
+    </select>
   </div>
   <div>
     <label for="lat1">First point latitude:</label>
@@ -242,7 +273,7 @@ button {
   <div class="button">
   <button type="reset" onclick="deleteMarkers()">Reset</button>
   </div>
-  </form>
+</form>-->
 </div>
   <iframe width="0" height="0" border="0" name="dummyframe" id="dummyframe" style="display:none"></iframe>
     <script async defer

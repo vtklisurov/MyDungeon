@@ -9,10 +9,11 @@
        $db='wp_task';
 
        $dbcon = new mysqli($host,$user,$pass,$db);
-       $sqlget = "select id, name, latitude, longitude from map_coords where id>0";
+       $sqlget = "select id, name, latitude, longitude, country from map_coords where id>0";
        if($_POST['city_country']!='') $sqlget .= " and country ='" . $_POST['city_country'] . "'";
        if($_POST['city_name']!='') $sqlget .= " and name ='" . $_POST['city_name'] . "'";
        if($_POST['city_timezone']!='') $sqlget .= " and timezone = '" . $_POST['city_timezone'] . "'";
+       if($_POST['city_type']!='ANY') $sqlget .= " and feature_code ='" . $_POST['city_type'] . "'";
        $lat1 = $_POST['city_lat1'];
        $lat2 = $_POST['city_lat2'];
        $lng1 = $_POST['city_lng1'];
@@ -30,6 +31,7 @@
           $newnode->setAttribute("name",$row['name']);
           $newnode->setAttribute("lat", $row['latitude']);
           $newnode->setAttribute("lng", $row['longitude']);
+          $newnode->setAttribute("country", $row['country']);
        }
        ob_clean();
        echo $dom->saveXML();

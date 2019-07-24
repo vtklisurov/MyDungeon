@@ -15,8 +15,11 @@ function displayHTMLpage()
    $post_id=get_the_ID();
    if($post_id==1)
    {   
-      $asubHTML = file_get_contents(plugins_url('/wp_map.html',__FILE__ ));
-      return $content . $asubHTML;
+      if (is_single(1))
+	{
+          $asubHTML = file_get_contents(plugins_url('/wp_map.html',__FILE__ ));
+          return $content . $asubHTML;
+	}
    }
    if($post_id==63)
    {   
