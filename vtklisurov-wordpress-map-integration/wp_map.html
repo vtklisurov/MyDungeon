@@ -70,7 +70,7 @@
 
       #by_map {
         position: absolute;
-        top: 350px;
+        top: 390px;
         left: 10px;
         z-index: 99;
       }
@@ -87,50 +87,50 @@
     <div id="map"></div>
 
     <script>
-        var map;
-        var markersArr = [];
-        var infoWindow;
-        function initMap()
+      var map;
+      var markersArr = [];
+      var infoWindow;
+      function initMap()
+      {
+        map = new google.maps.Map(document.getElementById('map'),
         {
-          map = new google.maps.Map(document.getElementById('map'),
+          center: new google.maps.LatLng(20, 0),
+          zoom: 2,
+          disableDefaultUI: true
+        });
+        infoWindow = new google.maps.InfoWindow;
+
+      /*downloadUrl('http://localhost/wp-content/plugins/map-integration/outputXML.php', function(data)
+        {
+          var xml = data.responseXML;
+          markers = xml.documentElement.getElementsByTagName('marker');
+          Array.prototype.forEach.call(markers, function(markerElem)
           {
-            center: new google.maps.LatLng(20, 0),
-            zoom: 2,
-            disableDefaultUI: true
-          });
-          infoWindow = new google.maps.InfoWindow;
+            var id = markerElem.getAttribute('id');
+            var name = markerElem.getAttribute('name');
+            var point = new google.maps.LatLng(
+              parseFloat(markerElem.getAttribute('lat')),
+              parseFloat(markerElem.getAttribute('lng')));
 
-        /*downloadUrl('http://localhost/wp-content/plugins/map-integration/outputXML.php', function(data)
-          {
-            var xml = data.responseXML;
-            markers = xml.documentElement.getElementsByTagName('marker');
-            Array.prototype.forEach.call(markers, function(markerElem)
-            {
-              var id = markerElem.getAttribute('id');
-              var name = markerElem.getAttribute('name');
-              var point = new google.maps.LatLng(
-                parseFloat(markerElem.getAttribute('lat')),
-                parseFloat(markerElem.getAttribute('lng')));
+              var infowincontent = document.createElement('div');
+              var strong = document.createElement('strong');
+              strong.textContent = name
+              infowincontent.appendChild(strong);
+              infowincontent.appendChild(document.createElement('br'));
 
-                var infowincontent = document.createElement('div');
-                var strong = document.createElement('strong');
-                strong.textContent = name
-                infowincontent.appendChild(strong);
-                infowincontent.appendChild(document.createElement('br'));
-
-                var marker = new google.maps.Marker
-                ({
-                map: map,
-                position: point,
-              });
-              markersArr.push(marker);
-              marker.addListener('click', function()
-              {
-                infoWindow.setContent(infowincontent);
-                infoWindow.open(map, marker);
-              });
+              var marker = new google.maps.Marker
+              ({
+              map: map,
+              position: point,
             });
-          });*/
+            markersArr.push(marker);
+            marker.addListener('click', function()
+            {
+              infoWindow.setContent(infowincontent);
+              infoWindow.open(map, marker);
+            });
+          });
+        });*/
       }
 
       function downloadUrl(url, callback)
@@ -163,46 +163,84 @@
         document.getElementById("cnt").innerHTML = markersArr.length;
       }
 
+      function validate(){
+        var lat1=document.getElementById("lat1").value;
+        var lat2=document.getElementById("lat2").value;
+        var lng1=document.getElementById("lng1").value;
+        var lng2=document.getElementById("lng2").value;
+        lat1=lat1.replace(',','.');
+        lng1=lng1.replace(',','.');
+        lat2=lat2.replace(',','.');
+        lng2=lng2.replace(',','.');
+        if ($.isNumeric(lat1) && $.isNumeric(lng1) && $.isNumeric(lat2) && $.isNumeric(lng2)) submitForm()
+        else if (lat1=="" && lat2=="" && lng1=="" && lng2=="") submitForm()
+        else alert("Coordinates must all be a decimal number");
 
-    $(document).ready(function(){
-      $("#by_map").load('/wp-content/plugins/map-integration/populate_menu.php', function(){
-        $("#submit").click(function(){
-            $.post(
-              '/wp-content/plugins/map-integration/outputXML.php',
-              $('#filter').serialize(),
-              function(data){
-                deleteMarkers();
-                var xml = data
-                markers = xml.documentElement.getElementsByTagName('marker');
-                Array.prototype.forEach.call(markers, function(markerElem){
-                  var id = markerElem.getAttribute('id');
-                  var name = markerElem.getAttribute('name');
-                  var country = markerElem.getAttribute('country');
-                  var point = new google.maps.LatLng(
-                    parseFloat(markerElem.getAttribute('lat')),
-                    parseFloat(markerElem.getAttribute('lng')));
+      }
 
-                  var contentstr="<div><b>" + name + ", " + country + "\n</b></div>"
-                    + "<div><b>Coordinates: " + markerElem.getAttribute('lat') + " " + markerElem.getAttribute('lng') + "\n</b></div>";
+      function submitForm()
+      {
+        $.post(
+          '/wp-content/plugins/map-integration/outputXML.php',
+          $('#filter').serialize(),
+          function(data){
+            deleteMarkers();
+            var xml = data
+            markers = xml.documentElement.getElementsByTagName('marker');
+            Array.prototype.forEach.call(markers, function(markerElem){
+              var id = markerElem.getAttribute('id');
+              var name = markerElem.getAttribute('name');
+              var country = markerElem.getAttribute('country');
+              var point = new google.maps.LatLng(
+                parseFloat(markerElem.getAttribute('lat')),
+                parseFloat(markerElem.getAttribute('lng')));
 
-                  var marker = new google.maps.Marker
-                  ({
-                    map: map,
-                    position: point,
-                  });
-                  markersArr.push(marker);
-                  document.getElementById("cnt").innerHTML = markersArr.length;
-                  marker.addListener('click', function()
-                  {
-                    infoWindow.setContent(contentstr);
-                    infoWindow.open(map, marker);
-                  });
+                var contentstr="<div><b>" + name + ", " + country + "\n</b></div>"
+                + "<div><b>Coordinates: " + markerElem.getAttribute('lat') + " " + markerElem.getAttribute('lng') + "\n</b></div>";
+
+                var marker = new google.maps.Marker
+                ({
+                  map: map,
+                  position: point,
+                });
+                markersArr.push(marker);
+                document.getElementById("cnt").innerHTML = markersArr.length;
+                marker.addListener('click', function()
+                {
+                  infoWindow.setContent(contentstr);
+                  infoWindow.open(map, marker);
+                });
               });
             });
             document.getElementById("cnt").innerHTML = markersArr.length;
+      }
+
+      $(document).ready(function(){
+        $("#by_map").load('/wp-content/plugins/map-integration/populate_menu.php');
+
+        setTimeout(function(){
+          $("#country").blur(function(){
+            var country=document.getElementById("country").value;
+            var query="country=" + country;
+            $.post("/wp-content/plugins/map-integration/outputXML.php", $('#filter').serialize(), function(data) {
+              var dataList = $("#city_name");
+              var cities = data.documentElement.getElementsByTagName('marker');
+              dataList.empty();
+              var opt = $("<option></option>").attr("value", "");
+              dataList.append(opt);
+              var usedNames=[];
+              Array.prototype.forEach.call(cities, function(cityElem){
+                var name = cityElem.getAttribute('name');
+                if($.inArray(name, usedNames) === -1){
+                  usedNames.push(name);
+                  var opt = $("<option></option>").attr("value", name);
+                  dataList.append(opt);
+                }
+              });
+            });
           });
-        });
-    });
+        }, 1000)
+      });
 
     </script>
     <div id="markercnt">
@@ -215,65 +253,6 @@
 
 <div id="by_map">
 
-    <!--<form name="filter" id="filter" action="/wp-content/plugins/map-integration/outputXML.php" method="GET"  target="dummyframe">
-  <div>
-    <label for="country">Country:</label>
-    <input type="text" id="country" name="city_country">
-  </div>
-  <div>
-    <label for="name">City:</label>
-    <input type="text" id="name" name="city_name">
-  </div>
-  <div>
-    <label for="timezone">Timezone:</label>
-    <input type="text" id="timezone" name="city_timezone">
-  </div>
-  <div>
-    <label for="type">Type:</label>
-    <select name="city_type">
-      <option>ANY</option>
-      <option>PPL</option>
-      <option>PPLA</option>
-      <option>PPLA2</option>
-      <option>PPLA3</option>
-      <option>PPLA4</option>
-      <option>PPLC</option>
-      <option>PPLCH</option>
-      <option>PPLF</option>
-      <option>PPLG</option>
-      <option>PPLH</option>
-      <option>PPLL</option>
-      <option>PPLQ</option>
-      <option>PPLR</option>
-      <option>PPLS</option>
-      <option>PPLW</option>
-      <option>PPLX</option>
-      <option>STLMT</option>
-    </select>
-  </div>
-  <div>
-    <label for="lat1">First point latitude:</label>
-    <input type="number" step="any" id="lat1" name="city_lat1">
-  </div>
-  <div>
-    <label for="lng1">First point longitude:</label>
-    <input type="number" step="any" id="lng1" name="city_lng1">
-  </div>
-  <div>
-    <label for="lat2">Second point latitude:</label>
-    <input type="number" step="any" id="lat2" name="city_lat2">
-  </div>
-  <div>
-    <label for="lng2">Second point longitude:</label>
-    <input type="number" step="any" id="lng2" name="city_lng2">
-  </div>
-  <div class="button">
-  <button type="button" id="submit">Filter</button>
-  </div>
-  <div class="button">
-  <button type="reset" onclick="deleteMarkers()">Reset</button>
-  </div>
-</form>-->
 </div>
   <iframe width="0" height="0" border="0" name="dummyframe" id="dummyframe" style="display:none"></iframe>
     <script async defer
