@@ -9,25 +9,71 @@
    $db='wp_task';
 
    $dbcon = new mysqli($host,$user,$pass,$db);
-   $sqlget = "select id, name, latitude, longitude, country from map_coords where id>0";
-   if($_POST['city_country']!='') $sqlget .= " and country ='" . $_POST['city_country'] . "'";
-   if($_POST['city_name']!='') $sqlget .= " and name ='" . $_POST['city_name'] . "'";
-   if($_POST['city_timezone']!='') $sqlget .= " and timezone = '" . $_POST['city_timezone'] . "'";
-   if($_POST['city_type']!='ANY') $sqlget .= " and feature_code ='" . $_POST['city_type'] . "'";
+
+   $data = [];
+   $params = "";
+   $where = [];
+
+   if ( $_POST['city_name']!='') {
+     $data[] = $_POST['city_name'];
+     $params.="s";
+     $where[] = "name = ?";
+   }
+   if ( $_POST['city_country']!='') {
+     $data[] = $_POST['city_country'];
+     $params.="s";
+     $where[] = "country = ?";
+   }
+   if ( $_POST['city_timezone']!='') {
+     $data[] = $_POST['city_timezone'];
+     $params.="s";
+     $where[] = "timezone = ?";
+   }
+   $type_input=[];
+   $type_input=$_POST['city_type'];
+   $types = "";
+   $type_param = "";
+
+   for($i = 0; $i<count($type_input); $i++){
+     if ( $type_input[$i]!='ANY') {
+       $type_param .= "s";
+       $types .= "feature_code = ?";
+       if ($i<(count($type_input)-1)) $types .= " or ";
+       else{
+          array_push($where, $types);
+          $data = array_merge($data, $type_input);
+          $params.=$type_param;
+       }
+     }
+     else break;
+   }
+
    $lat1 = $_POST['city_lat1'];
    $lat2 = $_POST['city_lat2'];
    $lng1 = $_POST['city_lng1'];
    $lng2 = $_POST['city_lng2'];
-   $lat1 = str_replace(',','.',$lat1);
-   $lat2 = str_replace(',','.',$lat2);
-   $lng1 = str_replace(',','.',$lng1);
-   $lng2 = str_replace(',','.',$lng2);
-   if($lat1!='' && $lat2!='' && $lng1!='' && $lng2!='') $sqlget .=" and latitude >" . min($lat1,$lat2) . " and latitude <" . max($lat1,$lat2) . " and longitude >" . min($lng1,$lng2) . " and longitude <" . max($lng1,$lng2);
-   $sqlget .= "order by name;";
-   $sqldata= $dbcon->query($sqlget);
+   if ( $lat1!='' && $lat2!='' && $lng1!='' && $lng2!='') {
+     $params.="ssss";
+     $minlat = min($lat1,$lat2);
+     $maxlat= max($lat1,$lat2);
+     $minlng = min($lng1,$lng2);
+     $maxlng= max($lng1,$lng2);
+     array_push($data, $minlat, $maxlat, $minlng, $maxlng);
+     $where[] = "latitude >= ? and latitude <= ? and longitude >= ? and longitude <= ?";
+   }
 
+   $sql = "select id, name, latitude, longitude, country from map_coords";
+   if ( count($where) > 0 ){
+     $sql .= " where ". implode(" and ", $where) . " order by name;";
+   }
+echo $sql;
+   $query = $dbcon->prepare($sql);
+   $query->bind_param($params, ...$data);
+   $query->execute();
+
+   $result = $query->get_result();
    header("Content-type: text/xml");
-   while ($row = $sqldata->fetch_assoc())
+   while ($row = $result->fetch_assoc())
    {
       $node = $dom->createElement("marker");
       $newnode = $parnode->appendChild($node);

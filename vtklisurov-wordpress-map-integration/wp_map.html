@@ -4,6 +4,8 @@
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js"></script>
     <title>Wordpress map</title>
     <style>
      #map {
@@ -70,7 +72,7 @@
 
       #by_map {
         position: absolute;
-        top: 390px;
+        top: 370px;
         left: 10px;
         z-index: 99;
       }
@@ -168,10 +170,18 @@
         var lat2=document.getElementById("lat2").value;
         var lng1=document.getElementById("lng1").value;
         var lng2=document.getElementById("lng2").value;
-        lat1=lat1.replace(',','.');
-        lng1=lng1.replace(',','.');
-        lat2=lat2.replace(',','.');
-        lng2=lng2.replace(',','.');
+        lat1=lat1.replace(/,/,'.');
+        lng1=lng1.replace(/,/,'.');
+        lat2=lat2.replace(/,/,'.');
+        lng2=lng2.replace(/,/,'.');
+        lat1=lat1.replace(/ /g,'');
+        lng1=lng1.replace(/ /g,'');
+        lat2=lat2.replace(/ /g,'');
+        lng2=lng2.replace(/ /g,'');
+        document.getElementById("lat1").value=lat1;
+        document.getElementById("lng1").value=lng1;
+        document.getElementById("lat2").value=lat2;
+        document.getElementById("lng2").value=lng2;
         if ($.isNumeric(lat1) && $.isNumeric(lng1) && $.isNumeric(lat2) && $.isNumeric(lng2)) submitForm()
         else if (lat1=="" && lat2=="" && lng1=="" && lng2=="") submitForm()
         else alert("Coordinates must all be a decimal number");
@@ -215,10 +225,14 @@
             document.getElementById("cnt").innerHTML = markersArr.length;
       }
 
+      $(document).ready(function() {
+
+      });
       $(document).ready(function(){
         $("#by_map").load('/wp-content/plugins/map-integration/populate_menu.php');
 
         setTimeout(function(){
+          $('#type').select2();
           $("#country").blur(function(){
             var country=document.getElementById("country").value;
             var query="country=" + country;

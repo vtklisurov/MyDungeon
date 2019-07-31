@@ -10,7 +10,7 @@
   echo '<form name="filter" id="filter" action="/wp-content/plugins/map-integration/outputXML.php" method="GET"  target="dummyframe">
     <div>
       <label for="country">Country:</label>
-      <input type="text" list="city_country" name="city_country" id="country" autocomplete="off"/>
+      <input type="text" multiple="multiple" list="city_country" name="city_country" id="country" autocomplete="off"/>
       <datalist id="city_country">';
       $sqlget = "select distinct country from map_coords order by country";
       $sqldata= $dbcon->query($sqlget);
@@ -42,8 +42,8 @@
     </div>
     <div>
       <label for="type">Type:</label>
-      <select name="city_type">
-        <option value="ANY">Any</option>
+      <select id="type" multiple name="city_type[]">
+        <option value="ANY">ANY</option>
         <option value="PPL">Populated place</option>
         <option value="PPLA">Seat of 1st order admin. division</option>
         <option value="PPLA2">Seat of 2nd order admin. division</option>
