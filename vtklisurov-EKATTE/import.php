@@ -5,11 +5,6 @@ error_reporting(E_ALL);
 
 $db = pg_connect("host=localhost port=5432 dbname=velin user=velin password=9810017583");
 
-// $query = "delete from ekatte;
-// delete from obstina;
-// delete from oblast;";
-// $result = pg_query($query);
-
 $query = "create temp table t(like oblast) on commit drop;
 COPY t(oblast,ekatte,name,region,doc,abc)
 FROM PROGRAM 'mlr --csv cut -f oblast,ekatte,name,region,document,abc /var/www/html/Postgre_Task/Ek_obl.csv | tail -n +2' NULL AS '' csv;

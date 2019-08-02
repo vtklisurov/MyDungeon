@@ -4,72 +4,55 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
   <style>
-    li {list-style: none;}
+    /* li {list-style: none;}
     .forms{
       display: inline-block;
       vertical-align: top;
       margin-left: 50px;
+    } */
+    #buttons{
+      display: inline-block;
     }
     #res{
       margin: 100px;
     }
+    #input{
+      align-items: center;
+    }
 
   </style>
   <script>
-    $.fn.form = function(type) {
+    $.fn.form = function() {
       var formData = {};
-      formData['form'] = type;
       this.find('[name]').each(function() {
         formData[this.name] = this.value;
       })
       return formData;
     };
 
-
-    function submitForm(type)
+    $(document).ready(function(){
+      $("#rowcnt").load('numrows.php');
+    })
+    function submitForm()
     {
-      $("#res").load('search.php', $("#"+type).form(type));
+      $("#res").load('search.php', $("#input").form());
     }
+    function deleteRes(){
+       document.getElementById("res").innerHTML = "";
+    }
+    
   </script>
 </head>
 <body>
-  <div class="forms" id="placediv">
-    <h2>Place information</h2>
-    <form autocomplete="off" id="place" name="place" action="search.php?form=place" method="POST" >
-      <li>EKATTE:</li><li><input type="text" name="ekatte" /></li>
-      <li>Name:</li><li><input type="text" name="name" /></li>
-      <li>Municipality:</li><li><input type="text" name="municipality" /></li>
-      <li>Province:</li><li><input type="text" name="province" /></li>
-      <li>Kind:</li><li><input type="text" name="kind" /></li>
-      <li>Category:</li><li><input type="text" name="category" /></li>
-      <li>Altitude:</li><li><input type="text" name="altitude" /></li>
-      <li>Document:</li><li><input type="text" name="doc" /></li>
-      <li><input type="button" value="Filter" onclick="submitForm('place')" /></li>
+  <center>
+    <form autocomplete="off" id="input" name="province" action="search.php?form=prov" method="POST" >
+      <input type="text" name="input"/><br>
+      <input type="button" value="Filter" onclick="submitForm()" />
+      <button type="reset" onclick="deleteRes()">Reset</button>
     </form>
-  </div>
-  <div class="forms" id="municdiv">
-    <h2>Municipality information</h2>
-    <form autocomplete="off" id="munic" name="municipality" action="search.php?form=munic" method="POST" >
-      <li>Minicipality code:</li><li><input type="text" name="code" /></li>
-      <li>Admin. center EKATTE:</li><li><input type="text" name="ekatte" /></li>
-      <li>Name:</li><li><input type="text" name="name" /></li>
-      <li>Province:</li><li><input type="text" name="province" /></li>
-      <li>Category:</li><li><input type="text" name="category" /></li>
-      <li>Document:</li><li><input type="text" name="doc" /></li>
-      <li><input type="button" value="Filter" onclick="submitForm('munic')" /></li>
-    </form>
-  </div>
-  <div class="forms" id="provdiv">
-    <h2>Province information</h2>
-    <form autocomplete="off" id="prov" name="province" action="search.php?form=prov" method="POST" >
-      <li>Province code:</li><li><input type="text" name="code" /></li>
-      <li>Admin. center EKATTE:</li><li><input type="text" name="ekatte" /></li>
-      <li>Name:</li><li><input type="text" name="name" /></li>
-      <li>Region:</li><li><input type="text" name="region" /></li>
-      <li>Document:</li><li><input type="text" name="doc" /></li>
-      <li><input type="button" value="Filter" onclick="submitForm('prov')" /></li>
-    </form>
-  </div>
+  </ceter>
+
+  <div id="rowcnt"></div>
   <div id="res"></div>
 </body>
 </html>
