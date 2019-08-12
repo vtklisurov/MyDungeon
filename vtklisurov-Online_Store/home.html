@@ -1,8 +1,22 @@
 <!DOCTYPE html>
 <head>
   <title>Generic online store</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 </head>
 <body>
-<h1 align="center">Homepage</h1>
-<p align="center">That's it for now</p>
+
+  <h1 align="center">Homepage</h1>
+  <p align="center">That's it for now</p>
+  <div style="text-align: center;">
+    <button align="center" onclick="location.href = '/Online_Store/search.html';">Search</button>
+  <div>
+  <div id="products"></div>
+
+  <script>
+  $(document).ready(function(){
+    $("#products").load("home.js");
+  });
+
+  </script>
 </body>
