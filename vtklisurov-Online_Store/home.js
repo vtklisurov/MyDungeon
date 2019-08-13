@@ -1,17 +1,10 @@
-
-
 const { Client } = require('pg');
 const connectionString = 'postgresql://velin:9810017583@localhost:5432/store';
+
 
 var client = new Client({
   connectionString: connectionString
 });
-
-client.connect();
-const result = client.query({
-  rowMode: 'array',
-  text: 'select * from products;'
-})
 
 var html = '<head>'
 + '<style>'
@@ -78,24 +71,37 @@ var html = '<head>'
 
 + '</style>'
 + '</head>'
-+ '<body>';
++ '<body>'
++ '<h1 align="center">Homepage</h1>'
++ '<p align="center">That\'s it for now</p>'
++ '<div style="text-align: center;">'
++ '  <button align="center" onclick="location.href = \'/Online_Store/search.html\';">Search</button>'
++ '<div>'
++ '<div id="products"></div>'
 
-var numprod;
-if(result.rowCount > 100) numprod = 100;
-else numprod = result.rowCount;
-for (var i=1; i <= numprod; i++) {
-   var rnd = Math.floor(Math.random() * result.rowCount)
 
-  html += ' <div class="column">'
-  + '<div class="card">'
-  + '<img src="' + result.fields[rnd][2] + '" alt="' + result.fields[rnd][1] + '" style="width:100%">'
-  + '<p style="font-size: 30px"><b>' + result.fields[rnd][2] + '</b><p>'
-  + '<p class="price">$' + result.fields[rnd][5] + '</p>'
-  + ' <p>' + result.fields[rnd][3] + '</p>'
-  + ' <p><button>Add to Cart</button></p>'
-  + ' </div>'
-  + ' </div>';
-}
+client.connect();
+client.query('SELECT * FROM products', function (err, result){
+  var numprod;
+  if(result.rowCount > 100) numprod = 100;
+  else numprod = result.rowCount;
+  for (var i=1; i <= numprod; i++) {
+     var rnd = Math.floor(Math.random() * result.rowCount)
+
+    html += ' <div class="column">'
+    + '<div class="card">'
+    + '<img src="' + result.rows[rnd].image_loc + '" alt="' + result.rows[rnd].name + '" style="width:100%">'
+    + '<p style="font-size: 30px"><b>' + result.rows[rnd].name + '</b><p>'
+    + '<p class="price">$' + result.rows[rnd].price + '</p>'
+    + ' <p>' + result.rows[rnd].description + '</p>'
+    + ' <p><button>Add to Cart</button></p>'
+    + ' </div>'
+    + ' </div>';
+  }
+  client.end();
+});
+
+
 html += '</body>';
 
-exports.html;
+exports.products = function Products(){ return html;};
