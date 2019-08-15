@@ -1,7 +1,6 @@
 const { Client } = require('pg');
 const connectionString = 'postgresql://velin:9810017583@localhost:5432/store';
 
-
 var client = new Client({
   connectionString: connectionString
 });

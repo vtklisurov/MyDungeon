@@ -18,9 +18,13 @@ function createServer(request, response) {
     response.end(' ');
   }
   if(request.url == '/home' || request.url == '/') {
-    response.writeHead(200, {"Content-Type": "text/html"});
-    response.write(homepage.products());
-    response.end('test');
+    // response.writeHead(200, {"Content-Type": "text/html"});
+    // var promise1 = Promise.resolve(register.checkUnique('vtklisurov', 'vtklisurov@gmail.com'));
+    // promise1.then(function(value) {
+    //   response.write(value);
+    //       response.end(' ');
+    // });
+    register.saveData('vtklisurov', '9810017583', 'Velin','Klisurov', 'vtklisurov@gmail.com')
   }
 }
 
