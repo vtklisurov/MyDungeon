@@ -79,7 +79,7 @@ var html = '<head>'
 + '<div id="products"></div>'
 
 
-client.connect();
+client.connect()
 client.query('SELECT * FROM products', function (err, result){
   var numprod;
   if(result.rowCount > 100) numprod = 100;

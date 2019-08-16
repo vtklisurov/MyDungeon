@@ -13,7 +13,7 @@ $query = "insert into products values";
 for ($i=0; $i < $entries; $i++) {
   $stock=rand($minstock,$maxstock);
   $price=rand($minprice,$maxprice);
-   $query.="(" . "$i" .", 'Myproduct$i'" . ", './images/placeholder.png'" . ", 'Description for MyProduct$i'" . ", " . $stock . ", " . $price . ")";
+   $query.="(" . "$i" .", 'MyProduct$i'" . ", './images/placeholder.png'" . ", 'Description for MyProduct$i'" . ", " . $stock . ", " . $price . ")";
   if ($i<$entries-1) $query.=",";
   else $query.=" on conflict do nothing;";
 }

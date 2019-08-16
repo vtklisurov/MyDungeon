@@ -18,15 +18,17 @@
 
     if(uname !="" && pass!="" && pass2!="" && fname!="" && lname!="" && email!=""){
       if (document.getElementById("password").value == document.getElementById("password2").value){
-        $.post("register.php", $("#registerform").serialize(), function (status){
-          if (status==1) alert("Username is taken");
-          else if (status==2) alert("Email is already registered");
-          else window.location.replace("success.html");
+        $.post("register.js", $("#registerform").serialize(), function (status){
+          if (status!="All good") alert(status);
+          else window.location.replace("./public/success.html");
         });
       }
       else alert("passwords do not match");
     }
     else alert("all fields are required");
+  }
+  function goToLogin(){
+    window.location.href="login";
   }
   </script>
 </head>
@@ -57,5 +59,7 @@
       <input type="email" id="email" name="email"/><br>
     </div>
       <input type="button" id="submit" value="Register" onclick="submitForm()" />
+      <label style="display:inline" for="login">If you already have an account, please log in</label>
+      <input style="display:inline" type="button" id="login" value="Login" onclick="goToLogin()" />
     </form>
 </body>

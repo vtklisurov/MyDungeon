@@ -17,6 +17,11 @@ while ($row = pg_fetch_row($result)) {
     echo 2;
     exit(2);
   }
+  if (strlen($_POST['pass']) < 5) {
+    #echo "alert('Password is too short');";
+    echo 3;
+    exit(3);
+  }
 }
 
 $hash = md5( rand(0,1000) );
