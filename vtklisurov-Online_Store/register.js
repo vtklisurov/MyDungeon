@@ -25,10 +25,7 @@ var html = '<head>'
 + '    if(uname !="" && pass!="" && pass2!="" && fname!="" && lname!="" && email!=""){'
 + '      if (document.getElementById("password").value == document.getElementById("password2").value){'
 + '        $.post("register.js", $("#registerform").serialize(), function (status){'
-+ '          if (status!="All good") alert(status);'
-//+ '          else if (status==2) alert("This email is already registered");'
-//+ '          else if (status==3) alert("The password is too short");'
-+ '          else window.location.href="success";'
++ '          if (status!="All good") window.location.href="/success";'
 + '        });'
 + '      }'
 + '      else alert("passwords do not match");'
@@ -89,11 +86,8 @@ async function checkUnique(username,email)
   var sql = "select username, email from users";
   client.connect();
   var unique;
-  result = await client.query(sql, async function(err,result){
-    res = await checkResult(result, username, email);
-    client.end();
-    return res;
-  })
+  result = await client.query(sql);
+  client.end();
   unique = await checkResult(result, username, email);
   return unique;
 }
@@ -125,7 +119,7 @@ async function saveData(username, pass, fname, lname, email)
     from: 'online_store_task@gmail.com',
     to: email,
     subject: 'Account Verification',
-    text: 'Please click this link to verify your account http://localhost:8080/verify?hash=' + hash
+    text: 'Please click this link to verify your account http://localhost:8080/verify/'+email +'/' + hash
   };
 
   transporter.sendMail(mailOptions, function(error, info){
