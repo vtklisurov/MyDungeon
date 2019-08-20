@@ -19,8 +19,7 @@
     if(uname !="" && pass!="" && pass2!="" && fname!="" && lname!="" && email!=""){
       if (document.getElementById("password").value == document.getElementById("password2").value){
         $.post("register.js", $("#registerform").serialize(), function (status){
-          if (status!="All good") alert(status);
-          else window.location.replace("./public/success.html");
+          if (status=="All good") window.location.href="/success";
         });
       }
       else alert("passwords do not match");
@@ -28,12 +27,12 @@
     else alert("all fields are required");
   }
   function goToLogin(){
-    window.location.href="login";
+    window.location.href="/login";
   }
   </script>
 </head>
 <body>
-  <form autocomplete="off" id="registerform" action="register.php" method="POST" >
+  <form autocomplete="off" id="registerform" action="register.js" method="POST" >
     <div>
       <label for="username">Username:</label>
       <input type="text" id="username" name="uname"/><br>

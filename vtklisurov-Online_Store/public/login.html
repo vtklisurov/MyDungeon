@@ -16,25 +16,22 @@
 
     document.cookie = 'loggedIn=; expires=Thu, 08 Aug 2019 00:00:01 GMT;  path=/';
     document.cookie = 'admin=; expires=Thu,  08 Aug 2019 00:00:01 GMT;  path=/';
-    alert(document.cookie);
-    if(uname !="" && pass!=""){
-      $.post("login.js", $("#loginform").serialize(), function (status){
-        if (status==1) alert("Please verify your account before logging in");
-        else if (status==2) alert("Your account has been banned");
-        else if (status==3) alert("Username and password do not match");
-        else if (status==0){
-          alert("Welcome");
-          document.cookie="loggedIn=yes; path=/";
-          alert(document.cookie);
-          window.location.href="home.html";
-        }
-        else if (status==4){
-          alert("Welcome, admin");
-          document.cookie="admin=yes; path=/";
-          window.location.href="admin_controls.html";
-        }
-      });
-    }
+      if(uname !="" && pass!=""){
+        $.post("login.js", $("#loginform").serialize(), function (status){
+          if (status=="Success"){
+            alert("Welcome");
+            document.cookie="loggedIn=yes; path=/";
+            alert(document.cookie);
+            window.location.href="/";
+          }
+          else if (status=="Admin"){
+            alert("Welcome, admin");
+            document.cookie="admin=yes; path=/";
+            window.location.href="/admin";
+          }
+          else alert(status);
+        });
+      }
     else alert("All fields are required");
   }
   function goToRegister(){

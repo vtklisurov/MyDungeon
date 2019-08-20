@@ -5,91 +5,94 @@ var saltrounds = 12;
 const { Client } = require('pg');
 const connectionString = 'postgresql://velin:9810017583@localhost:5432/store';
 
-var html = '<head>'
-+ '  <style>'
-+ '    input, label {'
-+ '      display:block;'
-+ '    }'
-+ '  </style>'
-+ '  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />'
-+ '  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>'
-+ '  <script>'
-+ '  function submitForm(){'
-+ '    var uname = document.getElementById("username").value;'
-+ '    var pass = document.getElementById("password").value;'
-+ '    var pass2 = document.getElementById("password2").value;'
-+ '    var fname = document.getElementById("fname").value;'
-+ '    var lname = document.getElementById("lname").value;'
-+ '    var email = document.getElementById("email").value;'
-+ ''
-+ '    if(uname !="" && pass!="" && pass2!="" && fname!="" && lname!="" && email!=""){'
-+ '      if (document.getElementById("password").value == document.getElementById("password2").value){'
-+ '        $.post("register.js", $("#registerform").serialize(), function (status){'
-+ '          if (status!="All good") window.location.href="/success";'
-+ '        });'
-+ '      }'
-+ '      else alert("passwords do not match");'
-+ '    }'
-+ '    else alert("all fields are required");'
-+ '  }'
-+ '  function goToLogin(){'
-+ '    window.location.href="login";'
-+ '  }'
-+ '  </script>'
-+ '</head>'
-+ '<body>'
-+ '  <form autocomplete="off" id="registerform" action="register.js" method="POST" >'
-+ '    <div>'
-+ '      <label for="username">Username:</label>'
-+ '      <input type="text" id="username" name="uname"/><br>'
-+ '    </div>'
-+ '    <div>'
-+ '      <label for="password">Password:</label>'
-+ '      <input type="password" id="password" name="pass"/><br>'
-+ '    </div>'
-+ '    <div>'
-+ '      <label for="password2">Confirm password:</label>'
-+ '      <input type="password" id="password2" name="pass2"/><br>'
-+ '    </div>'
-+ '    <div>'
-+ '      <label for="fname">First name:</label>'
-+ '      <input type="text" id="fname" name="fname"/><br>'
-+ '    </div>'
-+ '    <div>'
-+ '      <label for="lname">Last name:</label>'
-+ '      <input type="text" id="lname" name="lname"/><br>'
-+ '    </div>'
-+ '    <div>'
-+ '      <label for="email">Email:</label>'
-+ '      <input type="email" id="email" name="email"/><br>'
-+ '    </div>'
-+ '      <input type="button" id="submit" value="Register" onclick="submitForm()" />'
-+ '      <label style="display:inline" for="login">If you already have an account, please log in</label>'
-+ '      <input style="display:inline" type="button" id="login" value="Login" onclick="goToLogin()" />'
-+ '    </form>'
-+ '</body>'
+var html = '<head>\n'
++ '  <style>\n'
++ '    input, label {\n'
++ '      display:block;\n'
++ '    }\n'
++ '  </style>\n'
++ '  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />\n'
++ '  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>\n'
++ '  <script>\n'
++ '  function submitForm(){\n'
++ '    var uname = document.getElementById("username").value;\n'
++ '    var pass = document.getElementById("password").value;\n'
++ '    var pass2 = document.getElementById("password2").value;\n'
++ '    var fname = document.getElementById("fname").value;\n'
++ '    var lname = document.getElementById("lname").value;\n'
++ '    var email = document.getElementById("email").value;\n'
++ '\n'
++ '    if(uname !="" && pass!="" && pass2!="" && fname!="" && lname!="" && email!=""){\n'
++ '      if (document.getElementById("password").value == document.getElementById("password2").value){\n'
++ '        $.post("register.js", $("#registerform").serialize(), function (status){\n'
++ '          if (status=="All good") window.location.href="/success";\n'
++ '        });\n'
++ '      }\n'
++ '      else alert("passwords do not match");\n'
++ '    }\n'
++ '    else alert("all fields are required");\n'
++ '  }\n'
++ '  function goToLogin(){\n'
++ '    window.location.href="/login";\n'
++ '  }\n'
++ '  </script>\n'
++ '</head>\n'
++ '<body>\n'
++ '  <form autocomplete="off" id="registerform" action="register.js" method="POST" >\n'
++ '    <div>\n'
++ '      <label for="username">Username:</label>\n'
++ '      <input type="text" id="username" name="uname"/><br>\n'
++ '    </div>\n'
++ '    <div>\n'
++ '      <label for="password">Password:</label>\n'
++ '      <input type="password" id="password" name="pass"/><br>\n'
++ '    </div>\n'
++ '    <div>\n'
++ '      <label for="password2">Confirm password:</label>\n'
++ '      <input type="password" id="password2" name="pass2"/><br>\n'
++ '    </div>\n'
++ '    <div>\n'
++ '      <label for="fname">First name:</label>\n'
++ '      <input type="text" id="fname" name="fname"/><br>\n'
++ '    </div>\n'
++ '    <div>\n'
++ '      <label for="lname">Last name:</label>\n'
++ '      <input type="text" id="lname" name="lname"/><br>\n'
++ '    </div>\n'
++ '    <div>\n'
++ '      <label for="email">Email:</label>\n'
++ '      <input type="email" id="email" name="email"/><br>\n'
++ '    </div>\n'
++ '      <input type="button" id="submit" value="Register" onclick="submitForm()" />\n'
++ '      <label style="display:inline" for="login">If you already have an account, please log in</label>\n'
++ '      <input style="display:inline" type="button" id="login" value="Login" onclick="goToLogin()" />\n'
++ '    </form>\n'
++ '</body>\n'
 
-
-function checkResult (result, username, email){
-  for (var i = 0; i < result.rowCount; i++) {
-    if (username == result.rows[i].username) return "Username exists";
-    else if (email == result.rows[i].email) return "Email exists";
-  }
-  return "All good";
-}
+// function checkResult (result, username, email){
+//   for (var i = 0; i < result.rowCount; i++) {
+//     if (username == result.rows[i].username) return "Username exists";
+//     else if (email == result.rows[i].email) return "Email exists";
+//   }
+//   return "All good";
+// }
 
 async function checkUnique(username,email)
 {
   var client = new Client({
     connectionString: connectionString
   });
-  var sql = "select username, email from users";
+  var sql = "select username, email from users where username=$1";
   client.connect();
-  var unique;
-  result = await client.query(sql);
+  result = await client.query(sql,[username]);
+  if (result.rowCount!=0) return "Username exists"
+  else {
+    sql = "select username, email from users where email=$1";
+    result = await client.query(sql,[username]);
+    if (result.rowCount!=0) return "Email exists"
+    else return "All good"
+  }
   client.end();
-  unique = await checkResult(result, username, email);
-  return unique;
 }
 
 async function saveData(username, pass, fname, lname, email)
@@ -99,13 +102,20 @@ async function saveData(username, pass, fname, lname, email)
   });
   var hash = await md5(Math.floor(Math.random() * 1000))
   bcrypt.hash(pass,saltrounds, async function(err,hashedpass){
-    var sql = "insert into users (username, pass, fname, lname, email, hash) values ($1,$2,$3,$4,$5,$6)"
+    var sql = "insert into users (username, pass, fname, lname, email, hash) values ($1,$2,$3,$4,$5,$6) returning username"
     client.connect();
-    insert = await client.query(sql,[username, hashedpass, fname, lname, email, hash], async function(err, result){
-      if(err) console.log(err);
+    client.query(sql,[username, hashedpass, fname, lname, email, hash], async function(err, result){
+      client.end();
+      setTimeout(async function(){
+        var client = new Client({
+          connectionString: connectionString
+        });
+        client.connect();
+        sql = "delete from users where username=$1 and status=0";
+        client.query(sql,[result.rows[0].username]);
+      }, 600000)
     });
   })
-
 
   var transporter = nodemailer.createTransport({
     service: 'gmail',
