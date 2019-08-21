@@ -3,7 +3,7 @@ var nodemailer = require('nodemailer');
 var bcrypt = require('bcrypt');
 var saltrounds = 12;
 const { Client } = require('pg');
-const connectionString = 'postgresql://velin:9810017583@localhost:5432/store';
+const connectionString = require("./connector.js").connectionString
 
 var html = '<head>\n'
 + '  <style>\n'
@@ -25,7 +25,7 @@ var html = '<head>\n'
 + '    if(uname !="" && pass!="" && pass2!="" && fname!="" && lname!="" && email!=""){\n'
 + '      if (document.getElementById("password").value == document.getElementById("password2").value){\n'
 + '        $.post("register.js", $("#registerform").serialize(), function (status){\n'
-+ '          if (status=="All good") window.location.href="/success";\n'
++ '          if (status=="All good") {window.location.href="/success";\n'
 + '        });\n'
 + '      }\n'
 + '      else alert("passwords do not match");\n'
@@ -83,15 +83,19 @@ async function checkUnique(username,email)
     connectionString: connectionString
   });
   var sql = "select username, email from users where username=$1";
+
   client.connect();
   result = await client.query(sql,[username]);
-  if (result.rowCount!=0) return "Username exists"
-  else {
+
+  if (result.rowCount!=0) {
+    return "Username exists"
+  } else {
     sql = "select username, email from users where email=$1";
     result = await client.query(sql,[username]);
     if (result.rowCount!=0) return "Email exists"
     else return "All good"
   }
+
   client.end();
 }
 
@@ -100,13 +104,15 @@ async function saveData(username, pass, fname, lname, email)
   var client = new Client({
     connectionString: connectionString
   });
+
   var hash = await md5(Math.floor(Math.random() * 1000))
-  bcrypt.hash(pass,saltrounds, async function(err,hashedpass){
+
+  bcrypt.hash(pass,saltrounds, function(err,hashedpass){
     var sql = "insert into users (username, pass, fname, lname, email, hash) values ($1,$2,$3,$4,$5,$6) returning username"
     client.connect();
-    client.query(sql,[username, hashedpass, fname, lname, email, hash], async function(err, result){
+    client.query(sql,[username, hashedpass, fname, lname, email, hash], function(err, result){
       client.end();
-      setTimeout(async function(){
+      setTimeout(function(){
         var client = new Client({
           connectionString: connectionString
         });

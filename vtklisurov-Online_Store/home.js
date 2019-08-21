@@ -1,7 +1,9 @@
 const { Client } = require('pg');
-const connectionString = 'postgresql://velin:9810017583@localhost:5432/store';
+const connectionString = require("./connector.js").connectionString
 
-var html = '<head>\n'
+var html = '<!DOCTYPE html>\n'
++ '<head>\n'
++ '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />\n'
 + '<style>\n'
 + '* {\n'
 + '  box-sizing: border-box;\n'
@@ -64,14 +66,34 @@ var html = '<head>\n'
 + '    margin-bottom: 20px;\n'
 + '  }\n'
 + '</style>\n'
++ '  <script>\n'
++ '      document.addEventListener("DOMContentLoaded", (event) => {'
++ '    var cookies = document.cookie\n'
++ '      cookies=cookies.split(";");\n'
++ '      for (var i = 0; i < cookies.length; i++) {\n'
++ '        if (cookies[i].includes("loggedIn=")){\n'
++ '          var uname = cookies[i].split("=")[1];\n'
++ '          var divcontent = "<button onclick=\\"location.href = \'/account\';\\">Profile</button>"\n'
++ '          document.getElementById("logindiv").innerHTML = divcontent;\n'
++ '          break;\n'
++ '        }\n'
++ '        if(uname==undefined) {\n'
++ '            var divcontent = "<button onclick=\\"location.href = \'/login\';\\">Login</button>"\n'
++ '            document.getElementById("logindiv").innerHTML = divcontent;\n'
++ '          }\n'
++ '      }\n'
++ '      }\n)'
++ '  </script>\n'
 + '</head>\n'
 + '<body>\n'
++ ' <div id="logindiv"></div>\n'
 + '<h1 align="center">Homepage</h1>\n'
 + '<p align="center">That\'s it for now</p>\n'
 + '<div style="text-align: center;">\n'
-+ '  <button align="center" onclick="location.href = \'/Online_Store/search.html\';">Search</button>\n'
++ '  <button align="center" onclick="location.href = \'/Online_Store/search\';">Search</button>\n'
 + '<div>\n'
 + '<div id="products"></div>\n'
+
 
 var client = new Client({
   connectionString: connectionString
@@ -80,8 +102,13 @@ var client = new Client({
 client.connect()
 client.query('SELECT * FROM products', function (err, result){
   var numprod;
-  if(result.rowCount > 100) numprod = 100;
-  else numprod = result.rowCount;
+
+  if(result.rowCount > 100) {
+    numprod = 100;
+  } else {
+    numprod = result.rowCount;
+  }
+
   for (var i=1; i <= numprod; i++) {
      var rnd = Math.floor(Math.random() * result.rowCount)
 
