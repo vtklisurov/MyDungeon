@@ -11,20 +11,17 @@
   localStorage.removeItem('status');
 
   $(document).ready(function(){
-    var cookies=document.cookie.split(";");
-    for (var i = 0; i < cookies.length; i++) {
-      if (cookies[i].includes("loggedIn=")){
-        var uname = cookies[i].split("=")[1];
+    $.post("islogged", function (status){
+      if (status.user!=undefined){
         document.getElementById("content").innerHTML = "<p1>You are already logged in</p><button onclick='logout()'>Logout</button>";
-        break
       }
-    }
+    });
   })
 
   function logout(){
-    document.cookie = 'loggedIn=; expires=Thu, 08 Aug 2019 00:00:01 GMT;  path=/';
-    document.cookie = 'admin=; expires=Thu,  08 Aug 2019 00:00:01 GMT;  path=/';
-    window.location.href="/login";
+    $.post("logout", function(res){
+      window.location.href='/';
+    });
   }
 
   function submitForm(){
@@ -32,15 +29,13 @@
     var pass = document.getElementById("password").value;
 
     if(uname !="" && pass!=""){
-      $.post("login.js", $("#loginform").serialize(), function (status){
+      $.post("login", $("#loginform").serialize(), function (status){
         if (status=="Success"){
           alert("Welcome");
-          document.cookie="loggedIn="+ uname + "; path=/";  
           window.location.href="/";
         }
         else if (status=="Admin"){
           alert("Welcome, admin");
-          document.cookie="admin=yes; path=/";
           window.location.href="/admin";
         }
         else alert(status);

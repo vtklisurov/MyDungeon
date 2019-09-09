@@ -18,13 +18,14 @@
 
     if(uname !="" && pass!="" && pass2!="" && fname!="" && lname!="" && email!=""){
       if (document.getElementById("password").value == document.getElementById("password2").value){
-        $.post("register.js", $("#registerform").serialize(), function (status){
+        $.post("register", $("#registerform").serialize(), function (status){
           if (status=="All good") window.location.href="/success";
+          else alert(status);
         });
       }
-      else alert("passwords do not match");
+      else alert("Passwords do not match");
     }
-    else alert("all fields are required");
+    else alert("All fields are required");
   }
   function goToLogin(){
     window.location.href="/login";
