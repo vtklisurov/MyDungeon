@@ -1,95 +1,114 @@
 const { Client } = require('pg');
 const connectionString = require('./connector.js').connectionString;
 
-var html = '<!DOCTYPE html>\n' +
-'<head>\n' +
-'<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />\n' +
-'<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>\n' +
-'<style>\n' +
-'* {\n' +
-'  box-sizing: border-box;\n' +
-'}\n' +
-'\n' +
-'body {\n' +
-'  font-family: Arial, Helvetica, sans-serif;\n' +
-'}\n' +
-'\n' +
-'.column {\n' +
-'  float: left;\n' +
-'  width: 25%;\n' +
-'  padding: 0 10px;\n' +
-'}\n' +
-'\n' +
-'.row {margin: 0 -5px;}\n' +
-'\n' +
-'.row:after {\n' +
-'  content: "";\n' +
-'  display: table;\n' +
-'  clear: both;\n' +
-'}\n' +
-'\n' +
-'.card {\n' +
-'  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);\n' +
-'  max-width: 300px;\n' +
-'  margin: auto;\n' +
-'  text-align: center;\n' +
-'  font-family: arial;\n' +
-'}\n' +
-'\n' +
-'.price {\n' +
-'  color: grey;\n' +
-'  font-size: 22px;\n' +
-'}\n' +
-'\n' +
-'.card button {\n' +
-'  border: none;\n' +
-'  outline: 0;\n' +
-'  padding: 12px;\n' +
-'  color: white;\n' +
-'  background-color: #000;\n' +
-'  text-align: center;\n' +
-'  cursor: pointer;\n' +
-'  width: 100%;\n' +
-'  font-size: 18px;\n' +
-'}\n' +
-'\n' +
-'.card button:hover {\n' +
-'  opacity: 0.7;\n' +
-'}\n' +
-'\n' +
-'div {\n' +
-'  word-wrap: break-word;\n' +
-'}\n' +
-'@media screen and (max-width: 800px) {\n' +
-'  .column {\n' +
-'    width: 100%;\n' +
-'    display: block;\n' +
-'    margin-bottom: 20px;\n' +
-'  }\n' +
-'</style>\n' +
-'  <script>\n' +
-'      document.addEventListener("DOMContentLoaded", (event) => {' +
-'        $.post("islogged", function (status){\n' +
-'          if (status.user!=undefined){\n' +
-'            var divcontent = "<button onclick=\\"location.href = \'/account\';\\">Profile</button>"\n' +
-'            document.getElementById("logindiv").innerHTML = divcontent;\n' +
-'          }\n' +
-'          else {\n' +
-'            var divcontent = "<button onclick=\\"location.href = \'/login\';\\">Login</button>"\n' +
-'            document.getElementById("logindiv").innerHTML = divcontent;\n' +
-'          }\n' +
-'        });\n' +
-'      }\n)' +
-'  </script>\n' +
-'</head>\n' +
-'<body>\n' +
-' <div id="logindiv"></div>\n' +
-'<h1 align="center">Homepage</h1>\n' +
-'<p align="center">That\'s it for now</p>\n' +
-'<div style="text-align: center;">\n' +
-'  <button align="center" onclick="location.href = \'/Online_Store/search\';">Search</button>\n' +
-'<div>\n' +
-'<div id="products"></div>\n';
+var html = `<!DOCTYPE html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.column {
+  float: left;
+  width: 25%;
+  padding: 0 10px;
+}
+
+.row {margin: 0 -5px;}
+
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  max-width: 300px;
+  margin: auto;
+  text-align: center;
+  font-family: arial;
+}
+
+.price {
+  color: grey;
+  font-size: 22px;
+}
+
+.card button {
+  border: none;
+  outline: 0;
+  padding: 12px;
+  color: white;
+  background-color: #000;
+  text-align: center;
+  cursor: pointer;
+  width: 100%;
+  font-size: 18px;
+}
+
+.card button:hover {
+  opacity: 0.7;
+}
+
+div {
+  word-wrap: break-word;
+}
+
+
+@media screen and (max-width: 800px) {
+  .column {
+    width: 100%;
+    display: block;
+    margin-bottom: 20px;
+  }
+</style>
+  <script>
+
+    function addToCart(id){
+      $.post("islogged", function (logged){
+        if (logged.user===undefined){
+          alert("You are not logged in");
+          window.location.href='/login';
+        } else {
+          $.post("/addToCart", {pid: id}, function(){
+            alert("Product added to cart");
+          })
+        }
+      });
+    }
+
+      $(document).ready(function(){
+        $.post("islogged", function (status){
+          if (status.user!=undefined){
+            var divcontent = "<button onclick=\\"location.href = \'/profile\';\\">Profile</button>";
+            document.getElementById("logindiv").innerHTML = divcontent;
+            var divcontent = "<button onclick=\\"location.href = \'/cart\';\\">Cart</button>";
+            document.getElementById("cartdiv").innerHTML = divcontent;
+          }
+          else {
+            var divcontent = "<button onclick=\\"location.href = \'/login\';\\">Login</button>";
+            document.getElementById("logindiv").innerHTML = divcontent;
+          }
+        });
+      });
+  </script>
+</head>
+<body>
+ <div style="display: inline" id="logindiv"></div>
+ <div style="display: inline" id="cartdiv"></div>
+<h1 align="center">Homepage</h1>
+<p align="center">That\'s it for now</p>
+<div style="text-align: center;">
+  <button align="center" onclick="location.href = \'/Online_Store/search\';">Search</button>
+<div>
+<div id="products"></div>`;
 
 var client = new Client({
   connectionString: connectionString
@@ -116,7 +135,7 @@ client.query('SELECT * FROM products WHERE for_sale=true', function (err, result
     '<p style="font-size: 30px"><b>' + result.rows[rnd].name + '</b><p>' +
     '<p class="price">$' + result.rows[rnd].price + '</p>' +
     ' <p>' + result.rows[rnd].description + '</p>' +
-    ' <p><button>Add to Cart</button></p>' +
+    ' <p><button onclick="addToCart(' + result.rows[rnd].id + ')">Add to Cart</button></p>' +
     ' </div>' +
     ' </div>';
   }

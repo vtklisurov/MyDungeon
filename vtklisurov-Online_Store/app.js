@@ -13,7 +13,7 @@ var RedisStore = require('connect-redis')(session);
 var client = redis.createClient();
 var productControls = require('./product_controls');
 var formidable = require('formidable');
-var fs = require('fs');
+var cart = require('./carts.js');
 
 var images = path.join(__dirname, 'images');
 var publicfiles = path.join(__dirname, 'public');
@@ -56,6 +56,10 @@ app.get('/admin', function (request, response) {
   // }
 });
 
+app.get('/cart', function (request, response) {
+  response.sendFile('public/cart.html', { root: __dirname });
+});
+
 app.post('/login', function (request, response) {
   var promise = login.checkLogin(request.body.uname, request.body.pass);
   promise.then(function (value) {
@@ -81,33 +85,38 @@ app.post('/logout', function (request, response) {
 
 app.post('/productControls', function (request, response) {
   var form = new formidable.IncomingForm();
-  form.parse(request, function (err, fields, files) {
+  form.parse(request, async function (err, fields, files) {
     if (err) {
       console.log(err);
       response.end();
     }
-    var pic;
-    if (files.filetoupload) {
-      pic = files.filetoupload.name;
-      var oldpath = files.filetoupload.path;
-      var newpath = './images/' + pic;
-      fs.rename(oldpath, newpath);
-    } else {
-      pic = 'placeholder.png';
-    }
-
     if (fields.form === 'update') {
-      productControls.update(fields, pic);
+      await productControls.update(fields, files);
     } else if (fields.form === 'add') {
-      productControls.add(fields, pic);
+      await productControls.add(fields, files);
     } else if (fields.form === 'delete') {
-      productControls.remove(fields);
+      await productControls.remove(fields);
     }
+    response.end();
   });
 });
 
 app.post('/islogged', function (request, response) {
   response.send(request.session);
+});
+
+app.post('/getCart', async function (request, response) {
+  var result = await cart.getProducts(request.body.uname);
+  response.send(result);
+});
+
+app.post('/addToCart', function (request, response) {
+  cart.addProduct(request.body.pid, request.session.user);
+});
+
+app.post('/removeProduct', async function (request, response) {
+  await cart.removeProduct(request.body.item, request.session.user);
+  response.end()
 });
 
 app.post('/register', function (request, response) {

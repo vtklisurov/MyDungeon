@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<head>
+  <style>
+    button{
+      margin-bottom: 10px;
+    }
+    pre{
+      margin-bottom: 0px;
+    }
+  </style>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+  <script>
+
+  function removeProduct(user, pid){
+    $.post('/removeProduct',{item: pid}, function(){
+        getCart(user);
+      })
+  }
+
+  function getCart(user){
+    var div = document.getElementById('itemsdiv');
+    div.innerHTML='';
+    $.post('/getCart',{uname: user}, function(cart){
+      if (cart.product.length===1 && cart.product[0].name===undefined){
+        div.innerHTML="<p>Your shopping cart is empty</p>";
+        return;
+      }
+        cart.product.forEach(function(item, index){
+        div.innerHTML += '<pre>Product: '+item.name+'\nPrice: '+item.price+'\nQuantity: '+item.quantity+'\n</pre>';
+        div.innerHTML += '<button onclick="removeProduct(\''+user+'\','+item.id+')">Remove</button>'
+      })
+      div.innerHTML+='<pre>\nTotal Price: '+cart.total;
+    })
+  }
+
+  $(document).ready(function(){
+    $.post("islogged", function (logged){
+      if (logged.user===undefined){
+        alert("You are not logged in");
+        window.location.href='/';
+      } else {
+        getCart(logged.user);
+      }
+    });
+  })
+  </script>
+</head>
+
+<body>
+  <div id="itemsdiv"></div>
+</body>
