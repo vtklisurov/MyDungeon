@@ -34,7 +34,7 @@ function update (toUpdate, files) {
     client.query('UPDATE products SET name=COALESCE($1,name),image_loc=COALESCE($2,image_loc),description=COALESCE($3,name),stock=COALESCE($4,stock),price=COALESCE($5,price) WHERE id=$6', [toUpdate.name ? toUpdate.name : null, './images/' + toUpdate.pid + '.' + ext, toUpdate.description ? toUpdate.description : null, toUpdate.stock ? toUpdate.stock : null, toUpdate.price ? toUpdate.price : null, toUpdate.pid], function (err, result) {
       if (err) {
         console.log(err);
-        return "Error in the database"
+        return 'Error in the database';
       }
       client.end();
     });

@@ -22,15 +22,19 @@
     var div = document.getElementById('itemsdiv');
     div.innerHTML='';
     $.post('/getCart',{uname: user}, function(cart){
-      if (cart.product.length===1 && cart.product[0].name===undefined){
-        div.innerHTML="<p>Your shopping cart is empty</p>";
+
+      if (cart.product===undefined || (cart.product.length===1 && cart.product[0].name===undefined)){
+        div.innerHTML='<p>Your shopping cart is empty</p>';
         return;
       }
+      var total = 0;
         cart.product.forEach(function(item, index){
-        div.innerHTML += '<pre>Product: '+item.name+'\nPrice: '+item.price+'\nQuantity: '+item.quantity+'\n</pre>';
-        div.innerHTML += '<button onclick="removeProduct(\''+user+'\','+item.id+')">Remove</button>'
+          total += item.price*item.quantity;
+          div.innerHTML += '<pre>Product: '+item.name+'\nPrice: '+item.price/100+'\nQuantity: '+item.quantity+'\n</pre>';
+          div.innerHTML += '<button onclick="removeProduct(\''+user+'\','+item.id+')">Remove</button>'
       })
-      div.innerHTML+='<pre>\nTotal Price: '+cart.total;
+
+      div.innerHTML+='<pre>\nTotal Price: '+total/100;
     })
   }
 
@@ -49,4 +53,5 @@
 
 <body>
   <div id="itemsdiv"></div>
+  <button onclick="window.location.href='/'">Home</button>
 </body>

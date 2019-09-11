@@ -14,6 +14,12 @@ var client = redis.createClient();
 var productControls = require('./product_controls');
 var formidable = require('formidable');
 var cart = require('./carts.js');
+var schedule = require('node-schedule');
+
+schedule.scheduleJob('0 0 * * *', function () {
+  register.deleteUnverified();
+  cart.deleteExpired();
+});
 
 var images = path.join(__dirname, 'images');
 var publicfiles = path.join(__dirname, 'public');
@@ -31,10 +37,16 @@ app.get('/register', async function (request, response) {
   response.sendFile('public/register.html', { root: __dirname });
 });
 
+app.get('/newAddr', async function (request, response) {
+  response.sendFile('public/newAddress.html', { root: __dirname });
+});
+
 app.get('/', function (request, response) {
-  response.writeHead(200, { 'Content-Type': 'text/html' });
-  response.write(homepage.products());
-  response.end();
+  response.sendFile('public/home.html', { root: __dirname });
+});
+
+app.post('/homeProducts', async function (request, response) {
+  response.send(await homepage.generateHTML());
 });
 
 app.get('/success', function (request, response) {
@@ -66,8 +78,7 @@ app.post('/login', function (request, response) {
     if (value === 'Success') {
       request.session.user = request.body.uname;
     } else if (value === 'Admin') {
-      request.session.user = request.body.uname;
-      request.session.admin = 'yes';
+      request.session.admin = request.body.uname;
     }
     response.send(value);
     response.end(' ');
@@ -75,11 +86,11 @@ app.post('/login', function (request, response) {
 });
 
 app.post('/logout', function (request, response) {
-  if (request.session.user) {
+  if (request.session.user || request.session.admin) {
     request.session.destroy();
-    response.redirect('/');
+    response.redirect('/login');
   } else {
-    response.redirect('/');
+    response.redirect('/login');
   }
 });
 
@@ -116,14 +127,25 @@ app.post('/addToCart', function (request, response) {
 
 app.post('/removeProduct', async function (request, response) {
   await cart.removeProduct(request.body.item, request.session.user);
-  response.end()
+  response.end();
+});
+
+app.post('/registerAdmin', async function (request, response) {
+  var result = await register.checkUnique(request.body.uname, request.body.email);
+  if (result === 'All good') {
+    register.saveUser(request.body.uname, request.body.pass, request.body.fname, request.body.lname, request.body.email, true);
+    response.send(result);
+  } else {
+    response.send(result);
+  }
+  response.end(' ');
 });
 
 app.post('/register', function (request, response) {
   var promise = register.checkUnique(request.body.uname, request.body.email);
   promise.then(function (value) {
     if (value === 'All good') {
-      register.saveData(request.body.uname, request.body.pass, request.body.fname, request.body.lname, request.body.email);
+      register.saveUser(request.body.uname, request.body.pass, request.body.fname, request.body.lname, request.body.email, false);
       response.send(value);
     } else {
       response.send(value);

@@ -1,123 +1,20 @@
 const { Client } = require('pg');
 const connectionString = require('./connector.js').connectionString;
 
-var html = `<!DOCTYPE html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-<style>
-* {
-  box-sizing: border-box;
-}
+async function generateHTML () {
+  var html = '';
+  var client = new Client({
+    connectionString: connectionString
+  });
 
-body {
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-.column {
-  float: left;
-  width: 25%;
-  padding: 0 10px;
-}
-
-.row {margin: 0 -5px;}
-
-.row:after {
-  content: "";
-  display: table;
-  clear: both;
-}
-
-.card {
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-  max-width: 300px;
-  margin: auto;
-  text-align: center;
-  font-family: arial;
-}
-
-.price {
-  color: grey;
-  font-size: 22px;
-}
-
-.card button {
-  border: none;
-  outline: 0;
-  padding: 12px;
-  color: white;
-  background-color: #000;
-  text-align: center;
-  cursor: pointer;
-  width: 100%;
-  font-size: 18px;
-}
-
-.card button:hover {
-  opacity: 0.7;
-}
-
-div {
-  word-wrap: break-word;
-}
-
-
-@media screen and (max-width: 800px) {
-  .column {
-    width: 100%;
-    display: block;
-    margin-bottom: 20px;
+  client.connect();
+  try {
+    var result = await client.query('SELECT * FROM products WHERE for_sale=true');
+  } catch (err) {
+    return err.message;
   }
-</style>
-  <script>
-
-    function addToCart(id){
-      $.post("islogged", function (logged){
-        if (logged.user===undefined){
-          alert("You are not logged in");
-          window.location.href='/login';
-        } else {
-          $.post("/addToCart", {pid: id}, function(){
-            alert("Product added to cart");
-          })
-        }
-      });
-    }
-
-      $(document).ready(function(){
-        $.post("islogged", function (status){
-          if (status.user!=undefined){
-            var divcontent = "<button onclick=\\"location.href = \'/profile\';\\">Profile</button>";
-            document.getElementById("logindiv").innerHTML = divcontent;
-            var divcontent = "<button onclick=\\"location.href = \'/cart\';\\">Cart</button>";
-            document.getElementById("cartdiv").innerHTML = divcontent;
-          }
-          else {
-            var divcontent = "<button onclick=\\"location.href = \'/login\';\\">Login</button>";
-            document.getElementById("logindiv").innerHTML = divcontent;
-          }
-        });
-      });
-  </script>
-</head>
-<body>
- <div style="display: inline" id="logindiv"></div>
- <div style="display: inline" id="cartdiv"></div>
-<h1 align="center">Homepage</h1>
-<p align="center">That\'s it for now</p>
-<div style="text-align: center;">
-  <button align="center" onclick="location.href = \'/Online_Store/search\';">Search</button>
-<div>
-<div id="products"></div>`;
-
-var client = new Client({
-  connectionString: connectionString
-});
-
-client.connect();
-client.query('SELECT * FROM products WHERE for_sale=true', function (err, result) {
   var numprod;
-  if (err) {
+  if (result.rowCount === 0) {
     return 'Error in the database';
   }
   if (result.rowCount > 100) {
@@ -126,22 +23,27 @@ client.query('SELECT * FROM products WHERE for_sale=true', function (err, result
     numprod = result.rowCount;
   }
 
+  var nums = [];
   for (var i = 1; i <= numprod; i++) {
     var rnd = Math.floor(Math.random() * result.rowCount);
-
+    if (nums.includes(rnd)) {
+      i--;
+      continue;
+    }
+    nums.push(rnd);
     html += ' <div class="column">' +
     '<div class="card">' +
     '<img src="' + result.rows[rnd].image_loc + '" alt="' + result.rows[rnd].name + '" style="width:100%">' +
     '<p style="font-size: 30px"><b>' + result.rows[rnd].name + '</b><p>' +
-    '<p class="price">$' + result.rows[rnd].price + '</p>' +
+    '<p class="price">$' + result.rows[rnd].price / 100 + '</p>' +
     ' <p>' + result.rows[rnd].description + '</p>' +
     ' <p><button onclick="addToCart(' + result.rows[rnd].id + ')">Add to Cart</button></p>' +
     ' </div>' +
     ' </div>';
   }
-  client.end();
-});
+  return html;
+}
 
-html += '</body>';
-
-exports.products = function Products () { return html; };
+module.exports = {
+  generateHTML
+};

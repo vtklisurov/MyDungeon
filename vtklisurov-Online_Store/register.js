@@ -11,13 +11,12 @@ async function checkUnique (username, email) {
   });
 
   client.connect();
-  var result = await client.query('SELECT username, email FROM users WHERE username=$1', [username]);
+  var result = await client.query('SELECT username, email FROM users WHERE username=$1 OR username IN (SELECT username FROM staff WHERE username=$1)', [username]);
 
   if (result.rowCount !== 0) {
     return 'Username exists';
   } else {
-    result = await client.query('SELECT username, email FROM users WHERE email=$1', [username]);
-
+    result = await client.query('SELECT username, email FROM users WHERE email=$1 OR email IN (SELECT username FROM staff WHERE username=$1)', [email]);
     if (result.rowCount !== 0) {
       return 'Email exists';
     } else {
@@ -26,7 +25,28 @@ async function checkUnique (username, email) {
   }
 }
 
-async function saveData (username, pass, fname, lname, email) {
+// async function saveAdmin (username, pass, fname, lname, email) {
+//   var client = new Client({
+//     connectionString: connectionString
+//   });
+//
+//   var hash = await md5(Math.floor(Math.random() * 1000));
+//
+//   bcrypt.hash(pass, saltrounds, function (err, hashedpass) {
+//     if (err) {
+//       return 'Error with the password hashing';
+//     }
+//     client.connect();
+//     client.query('INSERT INTO staff (username, pass, fname, lname, email, hash) VALUES ($1,$2,$3,$4,$5,$6)', [username, hashedpass, fname, lname, email, hash], function (err, result) {
+//       if (err) {
+//         return 'Error in the database';
+//       }
+//       client.end();
+//     });
+//   });
+// }
+
+async function saveUser (username, pass, fname, lname, email, isAdmin) {
   var client = new Client({
     connectionString: connectionString
   });
@@ -38,19 +58,23 @@ async function saveData (username, pass, fname, lname, email) {
       return 'Error with the password hashing';
     }
     client.connect();
-    client.query('INSERT INTO users (username, pass, fname, lname, email, hash) VALUES ($1,$2,$3,$4,$5,$6) RETURNING username', [username, hashedpass, fname, lname, email, hash], function (err, result) {
-      if (err) {
-        return 'Error in the database';
-      }
-      client.end();
-      setTimeout(function () {
-        var client = new Client({
-          connectionString: connectionString
-        });
-        client.connect();
-        client.query('DELETE FROM users WHERE username=$1 AND status=0', [result.rows[0].username]);
-      }, 600000);
-    });
+    if (isAdmin) {
+      client.query('INSERT INTO staff (username, pass, fname, lname, email) VALUES ($1,$2,$3,$4,$5)', [username, hashedpass, fname, lname, email], function (err, result) {
+        if (err) {
+          console.log(err);
+          return 'Error in the database';
+        }
+        client.end();
+      });
+    } else {
+      client.query('INSERT INTO users (username, pass, fname, lname, email, hash) VALUES ($1,$2,$3,$4,$5,$6)', [username, hashedpass, fname, lname, email, hash], function (err, result) {
+        if (err) {
+          console.log(err);
+          return 'Error in the database';
+        }
+        client.end();
+      });
+    }
   });
 
   var transporter = nodemailer.createTransport({
@@ -78,7 +102,22 @@ async function saveData (username, pass, fname, lname, email) {
   client.end();
 }
 
+async function deleteUnverified () {
+  var client = new Client({
+    connectionString: connectionString
+  });
+  client.connect();
+  await client.query('DELETE FROM users WHERE status=0 AND "created" < NOW() - INTERVAL \'15 minutes\';', function (err, result) {
+    if (err) {
+      console.log(err);
+    }
+  });
+  client.end();
+}
+
 module.exports = {
   checkUnique,
-  saveData
+  // saveAdmin,
+  saveUser,
+  deleteUnverified
 };

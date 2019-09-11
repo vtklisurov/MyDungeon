@@ -12,7 +12,7 @@
 
   $(document).ready(function(){
     $.post("islogged", function (status){
-      if (status.user!=undefined){
+      if (status.user!=undefined || status.admin!=undefined){
         document.getElementById("content").innerHTML = "<p1>You are already logged in</p><button onclick='logout()'>Logout</button>";
       }
     });
@@ -20,7 +20,7 @@
 
   function logout(){
     $.post("logout", function(res){
-      window.location.href='/';
+      window.location.href='/login';
     });
   }
 
