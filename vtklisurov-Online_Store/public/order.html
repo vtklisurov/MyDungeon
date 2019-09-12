@@ -26,6 +26,7 @@
     function placeOrder(){
       $.post('/placeOrder', $('#input').serialize() ,function(status){
         alert(status);
+        location.window.href='/';
       })
     }
 

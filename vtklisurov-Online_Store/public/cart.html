@@ -31,7 +31,7 @@
       var total = 0;
         cart.product.forEach(function(item, index){
           total += item.price*item.quantity;
-          div.innerHTML += '<pre>Product: '+item.name+'\nPrice: '+item.price/100+'\nQuantity: '+item.quantity+'\n</pre>';
+          div.innerHTML += '<pre>Product: '+item.name+'\nPrice: '+item.price/100+'\nQuantity: '+item.quantity+'\nTotal: '+item.price/100*item.quantity+'\n</pre>';
           div.innerHTML += '<button onclick="removeProduct(\''+user+'\','+item.id+')">Remove</button>'
       })
 
