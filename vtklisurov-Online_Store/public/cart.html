@@ -21,10 +21,11 @@
   function getCart(user){
     var div = document.getElementById('itemsdiv');
     div.innerHTML='';
-    $.post('/getCart',{uname: user}, function(cart){
+    $.post('/getCart', function(cart){
 
       if (cart.product===undefined || (cart.product.length===1 && cart.product[0].name===undefined)){
         div.innerHTML='<p>Your shopping cart is empty</p>';
+        document.getElementById("buy").style.display="none";
         return;
       }
       var total = 0;
@@ -54,4 +55,5 @@
 <body>
   <div id="itemsdiv"></div>
   <button onclick="window.location.href='/'">Home</button>
+  <button id="buy" onclick="window.location.href='/order'">Buy</button>
 </body>

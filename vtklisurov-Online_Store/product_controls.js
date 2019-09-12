@@ -23,7 +23,7 @@ function update (toUpdate, files) {
     pic = 'placeholder.png';
   }
   if (pic === 'placeholder.png') {
-    client.query('UPDATE products SET name=COALESCE($1,name),description=COALESCE($2,name),stock=COALESCE($3,stock),price=COALESCE($4,price) WHERE id=$5', [toUpdate.name ? toUpdate.name : null, toUpdate.description ? toUpdate.description : null, toUpdate.stock ? toUpdate.stock : null, toUpdate.price ? toUpdate.price : null, toUpdate.pid], function (err, result) {
+    client.query('UPDATE products SET name=COALESCE($1,name),description=COALESCE($2,name),stock=COALESCE($3,stock),price=COALESCE($4,price) WHERE id=$5', [toUpdate.name ? toUpdate.name : null, toUpdate.description ? toUpdate.description : null, toUpdate.stock ? toUpdate.stock : null, toUpdate.price ? toUpdate.price * 100 : null, toUpdate.pid], function (err, result) {
       if (err) {
         console.log(err);
         return 'Error in the database';
@@ -31,7 +31,7 @@ function update (toUpdate, files) {
       client.end();
     });
   } else {
-    client.query('UPDATE products SET name=COALESCE($1,name),image_loc=COALESCE($2,image_loc),description=COALESCE($3,name),stock=COALESCE($4,stock),price=COALESCE($5,price) WHERE id=$6', [toUpdate.name ? toUpdate.name : null, './images/' + toUpdate.pid + '.' + ext, toUpdate.description ? toUpdate.description : null, toUpdate.stock ? toUpdate.stock : null, toUpdate.price ? toUpdate.price : null, toUpdate.pid], function (err, result) {
+    client.query('UPDATE products SET name=COALESCE($1,name),image_loc=COALESCE($2,image_loc),description=COALESCE($3,name),stock=COALESCE($4,stock),price=COALESCE($5,price) WHERE id=$6', [toUpdate.name ? toUpdate.name : null, './images/' + toUpdate.pid + '.' + ext, toUpdate.description ? toUpdate.description : null, toUpdate.stock ? toUpdate.stock : null, toUpdate.price ? toUpdate.price * 100 : null, toUpdate.pid], function (err, result) {
       if (err) {
         console.log(err);
         return 'Error in the database';
@@ -46,7 +46,7 @@ function add (toAdd, files) {
     connectionString: connectionString
   });
   client.connect();
-  client.query('INSERT INTO products (name,description,stock,price) VALUES ($1,$2,$3,$4) RETURNING id', [toAdd.name, toAdd.description, toAdd.stock, toAdd.price], function (err, result) {
+  client.query('INSERT INTO products (name,description,stock,price) VALUES ($1,$2,$3,$4) RETURNING id', [toAdd.name, toAdd.description, toAdd.stock, toAdd.price * 100], function (err, result) {
     if (err) {
       console.log('From the adding:');
       console.log(err);

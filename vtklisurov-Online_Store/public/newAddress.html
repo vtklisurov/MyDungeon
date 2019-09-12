@@ -10,40 +10,40 @@
   <script>
 
   $(document).ready(function(){
-    $.post("islogged", function (status){
-      if (status.admin!=undefined){
-        document.getElementById("reg").innerHTML = '<input type="button" style="display:inline" id="submit" value="Register Admin" onclick="submitForm(true)" />';
-      } else if (status.user!=undefined){
-        window.location.href="/"
-      }
-    });
+    // $.post("islogged", function (status){
+    //   if (status.user===undefined){
+    //     document.getElementById("content").innerHTML = 'Please login before adding an address<button onclick="window.location.href='/'">Home</button>';
+    //   }
+    // });
   })
 
   function submitForm(){
-    $.post("/newAddr", ('#addressform').serialize(),function(){
-
+    $.post("/newAddr", $('#addressform').serialize(),function(status){
+      alert(status);
     })
   }
   </script>
 </head>
 <body>
-  <form autocomplete="off" id="addressform" method="POST" >
-    <div>
-      <label for="country">Country:</label>
-      <input type="text" id="country" name="country"/><br>
-    </div>
-    <div>
-      <label for="postal">Postal code:</label>
-      <input type="text" id="postal" name="postal"/><br>
-    </div>
-    <div>
-      <label for="city">City:</label>
-      <input type="text" id="fname" name="fname"/><br>
-    </div>
-    <div>
-      <label for="straddr">Street address:</label>
-      <input type="text" id="straddr" name="straddr"/><br>
-    </div>
-      <div id="reg"><input type="button" style="display:inline" id="submit" value="Add address" onclick="submitForm(false)" /></div>
+  <div id="content">
+    <form autocomplete="off" id="addressform" method="POST" >
+      <div>
+        <label for="country">Country:</label>
+        <input type="text" id="country" name="country" required/><br>
+      </div>
+      <div>
+        <label for="postal">Postal code:</label>
+        <input type="text" id="postal" name="postal" required/><br>
+      </div>
+      <div>
+        <label for="city">City:</label>
+        <input type="text" id="fname" name="city" required/><br>
+      </div>
+      <div>
+        <label for="straddr">Street address:</label>
+        <input type="text" id="straddr" name="straddr" required/><br>
+      </div>
+      <div id="add"><input type="button" style="display:inline" id="submit" value="Add address" onclick="submitForm(false)" /></div>
     </form>
+  </div>
 </body>

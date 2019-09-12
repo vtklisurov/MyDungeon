@@ -1,33 +1,13 @@
 const { Client } = require('pg');
 const connectionString = require('./connector.js').connectionString;
-
-async function unameToUid (uname) {
-  var client = new Client({
-    connectionString: connectionString
-  });
-  client.connect();
-  var uid;
-  var err;
-  var result = await client.query('SELECT user_id FROM users WHERE username=$1', [uname]);
-  if (result.rowCount === 0) {
-    err = Error("User doesn't exist");
-    throw (err);
-  } else if (result.rowCount !== 1) {
-    err = Error('Repeating usernames');
-    throw (err);
-  } else {
-    uid = result.rows[0].user_id;
-  }
-  client.end();
-  return uid;
-}
+var convert = require('./convert');
 
 async function removeProduct (pid, uname) {
   var client = new Client({
     connectionString: connectionString
   });
 
-  var uid = await unameToUid(uname);
+  var uid = await convert.unameToUid(uname);
 
   client.connect();
   var result = await client.query('SELECT cart_id FROM carts WHERE user_id=$1', [uid]);
@@ -55,7 +35,7 @@ async function getProducts (uname) {
     connectionString: connectionString
   });
 
-  var uid = await unameToUid(uname);
+  var uid = await convert.unameToUid(uname);
 
   client.connect();
   var result = await client.query('SELECT cart_id FROM carts WHERE user_id=$1', [uid]);
@@ -91,7 +71,7 @@ async function addProduct (pid, user) {
     connectionString: connectionString
   });
 
-  var uid = await unameToUid(user);
+  var uid = await convert.unameToUid(user);
 
   client.connect();
   var cid;

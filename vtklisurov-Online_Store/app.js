@@ -15,6 +15,8 @@ var productControls = require('./product_controls');
 var formidable = require('formidable');
 var cart = require('./carts.js');
 var schedule = require('node-schedule');
+var addr = require('./addr');
+var order = require('./order');
 
 schedule.scheduleJob('0 0 * * *', function () {
   register.deleteUnverified();
@@ -34,7 +36,11 @@ app.use('/images', express.static(images));
 app.use('/public', express.static(publicfiles));
 
 app.get('/register', async function (request, response) {
-  response.sendFile('public/register.html', { root: __dirname });
+  if ((request.session.user === undefined && request.session.admin === undefined) || request.session.admin !== undefined) {
+    response.sendFile('public/register.html', { root: __dirname });
+  } else {
+    response.send("<script>alert('You are already logged in');window.location.href='/'</script>");
+  }
 });
 
 app.get('/newAddr', async function (request, response) {
@@ -117,8 +123,16 @@ app.post('/islogged', function (request, response) {
 });
 
 app.post('/getCart', async function (request, response) {
-  var result = await cart.getProducts(request.body.uname);
+  var result = await cart.getProducts(request.session.user);
   response.send(result);
+});
+
+app.get('/order', async function (request, response) {
+  if (request.session.user !== undefined) {
+    response.sendFile('public/order.html', { root: __dirname });
+  } else {
+    response.write('<script>alert("You are not logged in");window.location.href="/login"</script>');
+  }
 });
 
 app.post('/addToCart', function (request, response) {
@@ -130,22 +144,32 @@ app.post('/removeProduct', async function (request, response) {
   response.end();
 });
 
-app.post('/registerAdmin', async function (request, response) {
-  var result = await register.checkUnique(request.body.uname, request.body.email);
-  if (result === 'All good') {
-    register.saveUser(request.body.uname, request.body.pass, request.body.fname, request.body.lname, request.body.email, true);
-    response.send(result);
-  } else {
-    response.send(result);
+app.post('/newAddr', async function (request, response) {
+  response.send(await addr.saveAddr(request.body, request.session.user));
+});
+
+app.post('/placeOrder', async function (request, response) {
+  response.send(await order.place(request.session.user, request.body.addr));
+});
+
+app.post('/fillDropdowns', async function (request, response) {
+  try {
+    var addresses = await addr.getAddr(request.session.user);
+    var types = await order.getPayTypes();
+  } catch (err) {
+    return 'Error in the database';
   }
-  response.end(' ');
+  var result = {};
+  result.addresses = addresses;
+  result.types = types;
+  response.send(result);
 });
 
 app.post('/register', function (request, response) {
-  var promise = register.checkUnique(request.body.uname, request.body.email);
+  var promise = register.checkData(request.body);
   promise.then(function (value) {
     if (value === 'All good') {
-      register.saveUser(request.body.uname, request.body.pass, request.body.fname, request.body.lname, request.body.email, false);
+      register.saveUser(request.body.uname, request.body.pass, request.body.fname, request.body.lname, request.body.email, request.session.admin);
       response.send(value);
     } else {
       response.send(value);

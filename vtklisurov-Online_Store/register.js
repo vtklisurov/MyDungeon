@@ -5,18 +5,25 @@ var saltrounds = 12;
 const { Client } = require('pg');
 const connectionString = require('./connector.js').connectionString;
 
-async function checkUnique (username, email) {
+async function checkData (data) {
   var client = new Client({
     connectionString: connectionString
   });
 
+  if (!data.uname || !data.email || !data.pass || !data.pass2 || !data.fname || !data.lname) {
+    return 'All fields are required';
+  }
+  if (data.pass !== data.pass2) {
+    return 'Passwords do not match';
+  }
+
   client.connect();
-  var result = await client.query('SELECT username, email FROM users WHERE username=$1 OR username IN (SELECT username FROM staff WHERE username=$1)', [username]);
+  var result = await client.query('SELECT username, email FROM users WHERE username=$1 OR username IN (SELECT username FROM staff WHERE username=$1)', [data.uname]);
 
   if (result.rowCount !== 0) {
     return 'Username exists';
   } else {
-    result = await client.query('SELECT username, email FROM users WHERE email=$1 OR email IN (SELECT username FROM staff WHERE username=$1)', [email]);
+    result = await client.query('SELECT username, email FROM users WHERE email=$1 OR email IN (SELECT username FROM staff WHERE username=$1)', [data.email]);
     if (result.rowCount !== 0) {
       return 'Email exists';
     } else {
@@ -24,27 +31,6 @@ async function checkUnique (username, email) {
     }
   }
 }
-
-// async function saveAdmin (username, pass, fname, lname, email) {
-//   var client = new Client({
-//     connectionString: connectionString
-//   });
-//
-//   var hash = await md5(Math.floor(Math.random() * 1000));
-//
-//   bcrypt.hash(pass, saltrounds, function (err, hashedpass) {
-//     if (err) {
-//       return 'Error with the password hashing';
-//     }
-//     client.connect();
-//     client.query('INSERT INTO staff (username, pass, fname, lname, email, hash) VALUES ($1,$2,$3,$4,$5,$6)', [username, hashedpass, fname, lname, email, hash], function (err, result) {
-//       if (err) {
-//         return 'Error in the database';
-//       }
-//       client.end();
-//     });
-//   });
-// }
 
 async function saveUser (username, pass, fname, lname, email, isAdmin) {
   var client = new Client({
@@ -116,7 +102,7 @@ async function deleteUnverified () {
 }
 
 module.exports = {
-  checkUnique,
+  checkData,
   // saveAdmin,
   saveUser,
   deleteUnverified

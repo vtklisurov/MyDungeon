@@ -82,6 +82,7 @@
 
   $(document).ready(function(){
     $.post("islogged", function (status){
+
       if (status.user!=undefined){
         var divcontent = "<button onclick=\"location.href = '/profile';\">Profile</button>";
         document.getElementById("logindiv").innerHTML = divcontent;

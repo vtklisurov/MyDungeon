@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<head>
+  <style>
+    select{
+      margin-bottom: 10px;
+    }
+  </style>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+  <script>
+    $(document).ready(function(){
+      try{
+        $.post('/fillDropdowns', function(res){
+          for (var i = 0; i < res.addresses.length; i++) {
+            document.getElementById('address').innerHTML+= '<option value="'+ res.addresses[i].id +'">'+res.addresses[i].country+', '+res.addresses[i].city+', '+res.addresses[i].postal+', '+res.addresses[i].str_address+'</option>'
+          }
+          for (var j = 0; j < res.types.length; j++) {
+            document.getElementById('paymentType').innerHTML+= '<option value="'+ res.types[j].type +'">'+res.types[j].meaning+'</option>'
+          }
+        })
+      } catch(err) {
+        body.innerHTML="Error with the database";
+      }
+    });
+
+    function placeOrder(){
+      $.post('/placeOrder', $('#input').serialize() ,function(status){
+        alert(status);
+      })
+    }
+
+  </script>
+</head>
+<body>
+  <form id='input'>
+    <label>Select payment type:</label>
+      <select id="paymentType" name='type'></select><br>
+      <label>Select address:</label>
+      <select id="address" name='addr'></select><br>
+    <input type='button' id="buy" onclick="placeOrder()" value='Buy'>
+  </form>
+</body>
