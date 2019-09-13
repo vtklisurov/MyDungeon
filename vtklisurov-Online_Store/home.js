@@ -2,14 +2,13 @@ const { Client } = require('pg');
 const connectionString = require('./connector.js').connectionString;
 
 async function generateHTML () {
-  var html = '';
   var client = new Client({
     connectionString: connectionString
   });
 
   client.connect();
   try {
-    var result = await client.query('SELECT * FROM products WHERE for_sale=true');
+    var result = await client.query('SELECT random() as rnd, * FROM products WHERE for_sale=true and stock>0 ORDER BY rnd LIMIT 100');
   } catch (err) {
     return err.message;
   }
@@ -23,25 +22,18 @@ async function generateHTML () {
     numprod = result.rowCount;
   }
 
-  var nums = [];
-  for (var i = 1; i <= numprod; i++) {
-    var rnd = Math.floor(Math.random() * result.rowCount);
-    if (nums.includes(rnd)) {
-      i--;
-      continue;
-    }
-    nums.push(rnd);
-    html += ' <div class="column">' +
-    '<div class="card">' +
-    '<img src="' + result.rows[rnd].image_loc + '" alt="' + result.rows[rnd].name + '" style="width:100%">' +
-    '<p style="font-size: 30px"><b>' + result.rows[rnd].name + '</b><p>' +
-    '<p class="price">$' + result.rows[rnd].price / 100 + '</p>' +
-    ' <p>' + result.rows[rnd].description + '</p>' +
-    ' <p><button onclick="addToCart(' + result.rows[rnd].id + ')">Add to Cart</button></p>' +
-    ' </div>' +
-    ' </div>';
+  var obj = {};
+  obj.prod = [];
+  var price;
+  for (var i = 0; i < numprod; i++) {
+    price = result.rows[i].price / 100;
+    obj.prod.push({});
+    obj.prod[i].img = result.rows[i].image_loc;
+    obj.prod[i].name = result.rows[i].name;
+    obj.prod[i].price = price.toFixed(2);
+    obj.prod[i].id = result.rows[i].id;
   }
-  return html;
+  return obj;
 }
 
 module.exports = {

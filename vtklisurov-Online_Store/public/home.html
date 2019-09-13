@@ -2,6 +2,7 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+  <script src="https://cdn.rawgit.com/janl/mustache.js/master/mustache.js"></script>
   <style>
   * {
     box-sizing: border-box;
@@ -73,8 +74,10 @@
         alert("You are not logged in");
         window.location.href='/login';
       } else {
-        $.post("/addToCart", {pid: id}, function(){
-          alert("Product added to cart");
+        $.post("/addToCart", {pid: id}, function(status){
+          if(status!=='Product added'){
+            alert(status);
+          }
         })
       }
     });
@@ -98,10 +101,27 @@
     });
 
     $.post("/homeProducts", function (res){
-      document.getElementById("products").innerHTML = res;
+      var temp = $('#products').html();
+      var html = Mustache.render(temp, res);
+      document.getElementById("productdiv").innerHTML = html;
     });
   });
   </script>
+
+  <script type="text/template" id="products">
+    {{#prod}}
+    <div class="column">
+      <div class="card">
+        <img src="{{img}}" alt={{name}} style="width:100%">
+        <p style="font-size: 30px"><b>{{name}}</b><p>
+        <p class="price">${{price}}</p>
+        <p>{{description}}</p>
+        <p><button onclick="addToCart({{id}})">Add to Cart</button></p>
+      </div>
+    </div>
+    {{/prod}}
+  </script>
+
 </head>
 <body>
   <div style="display: inline" id="logindiv"></div>
@@ -109,7 +129,8 @@
   <h1 align="center">Homepage</h1>
   <p align="center">That's it for now</p>
   <div style="text-align: center;">
-    <button align="center" onclick="location.href = \'/Online_Store/search\';">Search</button>
-    <div>
-      <div id="products"></div>
-    </body>
+    <button align="center" onclick="location.href = '/Online_Store/search';">Search</button>
+  <div>
+  <div id="productdiv"></div>
+
+</body>

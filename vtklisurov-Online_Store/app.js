@@ -74,6 +74,10 @@ app.get('/admin', function (request, response) {
   // }
 });
 
+app.get('/profile', function (request, response) {
+  response.sendFile('public/profile.html', { root: __dirname });
+});
+
 app.get('/cart', function (request, response) {
   response.sendFile('public/cart.html', { root: __dirname });
 });
@@ -122,6 +126,11 @@ app.post('/islogged', function (request, response) {
   response.send(request.session);
 });
 
+app.post('/removeAll', async function (request, response) {
+  await cart.removeAll(request.session.user);
+  response.end();
+});
+
 app.post('/getCart', async function (request, response) {
   var result = await cart.getProducts(request.session.user);
   response.send(result);
@@ -135,12 +144,18 @@ app.get('/order', async function (request, response) {
   }
 });
 
-app.post('/addToCart', function (request, response) {
-  cart.addProduct(request.body.pid, request.session.user);
+app.post('/addToCart', async function (request, response) {
+  try {
+    await cart.addProduct(request.body.pid, request.session.user);
+  } catch (err) {
+    console.log(err);
+    response.send('An error occured');
+  }
+  response.send('Product added');
 });
 
 app.post('/removeProduct', async function (request, response) {
-  await cart.removeProduct(request.body.item, request.session.user);
+  await cart.removeProduct(request.body.item, request.session.user, request.body.all);
   response.end();
 });
 
@@ -149,46 +164,58 @@ app.post('/newAddr', async function (request, response) {
 });
 
 app.post('/placeOrder', async function (request, response) {
-  response.send(await order.place(request.session.user, request.body.addr));
+  response.send(await order.place(request.session.user, request.body));
 });
 
 app.post('/fillDropdowns', async function (request, response) {
-  try {
-    var addresses = await addr.getAddr(request.session.user);
-    var types = await order.getPayTypes();
-  } catch (err) {
-    return 'Error in the database';
-  }
+  var addresses = await addr.getAddr(request.session.user);
+  var types = await order.getPayTypes();
   var result = {};
   result.addresses = addresses;
   result.types = types;
   response.send(result);
 });
 
+app.post('/checkStock', async function (request, response) {
+  response.send(await cart.checkStock(request.session.user));
+});
+
 app.post('/register', function (request, response) {
-  var promise = register.checkData(request.body);
-  promise.then(function (value) {
-    if (value === 'All good') {
-      register.saveUser(request.body.uname, request.body.pass, request.body.fname, request.body.lname, request.body.email, request.session.admin);
-      response.send(value);
-    } else {
-      response.send(value);
-    }
-    response.end(' ');
-  });
+  try {
+    var promise = register.checkData(request.body);
+    promise.then(function (value) {
+      if (value === 'All good') {
+        register.saveUser(request.body.uname, request.body.pass, request.body.fname, request.body.lname, request.body.email, request.session.admin);
+        response.send(value);
+      } else {
+        response.send(value);
+      }
+      response.end();
+    });
+  } catch (err) {
+    response.send(err.message);
+  } finally {
+    response.end();
+  }
 });
 
 app.get('/verify/:email/:hash', function (request, response) {
-  response.writeHead(200, { 'Content-Type': 'text/html' });
-  var status = verify.checkHash(request.params.email, request.params.hash);
-  status.then(function (value) {
-    if (value === 'Ok') {
-      response.write('<p align="center">Your email has been verified</p><p align="center">You will be redirected to the login page shortly</p><script>setTimeout(function(){window.location.href="/login"},5000)</script>');
-    } else {
-      response.write('<p align="center">' + value + '</p>');
-    }
+  try {
+    response.writeHead(200, { 'Content-Type': 'text/html' });
+    var status = verify.checkHash(request.params.email, request.params.hash);
+    status.then(function (value) {
+      if (value === 'Ok') {
+        response.write('<p align="center">Your email has been verified</p><p align="center">You will be redirected to the login page shortly</p><script>setTimeout(function(){window.location.href="/login"},5000)</script>');
+      } else {
+        response.write('<p align="center">' + value + '</p>');
+      }
+      response.end();
+    });
+  } catch (err) {
+    response.send(err.message);
+  } finally {
     response.end();
-  });
+  }
 });
 
 app.listen(8080);

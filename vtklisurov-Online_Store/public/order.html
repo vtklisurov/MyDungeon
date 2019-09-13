@@ -7,16 +7,20 @@
   </style>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+  <script src="https://cdn.rawgit.com/janl/mustache.js/master/mustache.js"></script>
   <script>
     $(document).ready(function(){
       try{
         $.post('/fillDropdowns', function(res){
-          for (var i = 0; i < res.addresses.length; i++) {
-            document.getElementById('address').innerHTML+= '<option value="'+ res.addresses[i].id +'">'+res.addresses[i].country+', '+res.addresses[i].city+', '+res.addresses[i].postal+', '+res.addresses[i].str_address+'</option>'
-          }
-          for (var j = 0; j < res.types.length; j++) {
-            document.getElementById('paymentType').innerHTML+= '<option value="'+ res.types[j].type +'">'+res.types[j].meaning+'</option>'
-          }
+
+          var temp = $('#payTemp').html();
+          var html = Mustache.render(temp, res);
+          document.getElementById('paymentType').innerHTML=html;
+
+          var temp = $('#addrTemp').html();
+          var html = Mustache.render(temp, res);
+          document.getElementById('address').innerHTML=html;
+
         })
       } catch(err) {
         body.innerHTML="Error with the database";
@@ -24,13 +28,34 @@
     });
 
     function placeOrder(){
+      $.post('/checkStock', function(){
+        if (status!=='Ok'){
+          alert(status);
+          return;
+        } else {
+          window.location.href='/cart';
+        }
+      })
       $.post('/placeOrder', $('#input').serialize() ,function(status){
         alert(status);
-        location.window.href='/';
+        window.location.href='/';
       })
     }
 
   </script>
+
+  <script type="text/template" id="payTemp">
+    {{#types}}
+    <option value="{{type}}">{{meaning}}</option>
+    {{/types}}
+  </script>
+
+  <script type="text/template" id="addrTemp">
+    {{#addresses}}
+    <option value="{{id}}">{{country}},{{city}},{{postal}},{{str_address}}</option>
+    {{/addresses}}
+  </script>
+
 </head>
 <body>
   <form id='input'>

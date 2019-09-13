@@ -2,24 +2,21 @@ const { Client } = require('pg');
 const connectionString = require('./connector.js').connectionString;
 var convert = require('./convert');
 
-async function removeProduct (pid, uname) {
+async function removeProduct (pid, uname, forAll) {
   var client = new Client({
     connectionString: connectionString
   });
 
   var uid = await convert.unameToUid(uname);
+  var cid = await convert.uidToCid(uid);
 
   client.connect();
-  var result = await client.query('SELECT cart_id FROM carts WHERE user_id=$1', [uid]);
-  var cid = result.rows[0].cart_id;
-
-  result = await client.query('SELECT quantity FROM cart_products WHERE cart_id=$1 AND product_id=$2', [cid, pid]);
-  if (result.rows[0].quantity === 1) {
+  var result = await client.query('SELECT quantity FROM cart_products WHERE cart_id=$1 AND product_id=$2', [cid, pid]);
+  if (result.rows[0].quantity === 1 || forAll === 'true') {
     await client.query('DELETE FROM cart_products WHERE cart_id=$1 AND product_id=$2', [cid, pid]);
   } else {
     await client.query('UPDATE cart_products SET quantity=quantity-1 WHERE cart_id=$1 AND product_id=$2', [cid, pid]);
   }
-
   result = await client.query('DELETE FROM carts WHERE cart_id NOT IN (SELECT cart_id from cart_products)', function (err, result) {
     if (err) {
       console.log('Error when deleting empty cart');
@@ -52,6 +49,8 @@ async function getProducts (uname) {
   }
   var items = {};
   items.product = [{}];
+  var sum;
+  var total = 0;
   for (i = 0; i < pids.length; i++) {
     result = await client.query('SELECT * FROM products WHERE id=$1', [pids[i]]);
     if (i !== 0) {
@@ -60,9 +59,14 @@ async function getProducts (uname) {
     items.product[i].id = result.rows[0].id;
     items.product[i].name = result.rows[0].name;
     result = await client.query('SELECT quantity, price FROM cart_products WHERE cart_id=$1 AND product_id=$2', [cid, pids[i]]);
-    items.product[i].price = Number(result.rows[0].price);
+    items.product[i].price = Number(result.rows[0].price / 100);
     items.product[i].quantity = result.rows[0].quantity;
+    sum = result.rows[0].price * result.rows[0].quantity / 100;
+    items.product[i].sum = sum.toFixed(2);
+    total += (result.rows[0].price / 100) * result.rows[0].quantity;
   }
+  items.user = uname;
+  items.total = total.toFixed(2);
   return items;
 }
 
@@ -126,9 +130,56 @@ async function deleteExpired () {
   });
 }
 
+async function checkStock (user) {
+  var client = new Client({
+    connectionString: connectionString
+  });
+
+  var uid = await convert.unameToUid(user);
+  var cid = await convert.uidToCid(uid);
+  var result;
+
+  client.connect();
+
+  result = await client.query('SELECT name FROM cart_products JOIN products on cart_products.product_id = products.id WHERE cart_id=$1 AND stock<quantity', [cid]);
+
+  if (result.rowCount !== 0) {
+    if (result.rowCount === 1) {
+      return 'There is not enough of product ' + result.rows[0].name + ' in stock';
+    } else {
+      var str = 'There is not enough of products ';
+      for (var i = 0; i < result.rowCount; i++) {
+        str += result.rows[i].name;
+        if (i < result.rowCount - 1) {
+          str += ', ';
+        }
+      }
+      str += ' in stock';
+      return str;
+    }
+  } else {
+    return 'Ok';
+  }
+}
+
+async function removeAll (user) {
+  var client = new Client({
+    connectionString: connectionString
+  });
+
+  var uid = await convert.unameToUid(user);
+  var cid = await convert.uidToCid(uid);
+
+  client.connect();
+  await client.query('DELETE FROM cart_products WHERE cart_id=$1', [cid]);
+  await client.query('DELETE FROM carts WHERE cart_id=$1', [cid]);
+}
+
 module.exports = {
   getProducts,
   addProduct,
   removeProduct,
-  deleteExpired
+  deleteExpired,
+  checkStock,
+  removeAll
 };
