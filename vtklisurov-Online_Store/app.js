@@ -163,8 +163,25 @@ app.post('/newAddr', async function (request, response) {
   response.send(await addr.saveAddr(request.body, request.session.user));
 });
 
+app.get('/paySuccess', async function (request, response) {
+  order.paid(request.session.pay_id);
+  request.session.pay_id = '';
+  cart.removeAll(request.session.user);
+  response.sendFile('public/paySuccess.html', { root: __dirname });
+});
+
 app.post('/placeOrder', async function (request, response) {
-  response.send(await order.place(request.session.user, request.body));
+  try {
+    console.log(request.body);
+    if (request.body.type === '0') {
+      var result = await order.place(request.session.user, request.body);
+      request.session.pay_id = result.id;
+      response.redirect(result.returnUrl);
+    }
+  } catch (err) {
+    console.log(err);
+    response.send('An error occured');
+  }
 });
 
 app.post('/fillDropdowns', async function (request, response) {

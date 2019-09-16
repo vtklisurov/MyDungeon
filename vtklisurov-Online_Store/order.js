@@ -1,6 +1,24 @@
 const { Client } = require('pg');
 const connectionString = require('./connector.js').connectionString;
 var convert = require('./convert');
+var paypal = require('paypal-rest-sdk');
+paypal.configure({
+  mode: 'sandbox', // sandbox or live
+  client_id: 'Af84lwtHLfjxnC1cMgUfwfbLvyZc17LIriaadXfkx5RtMi24w1jfTiZQfJjE5JAcvBKsHdm3FUjfJP4l', // please provide your client id here
+  client_secret: 'EHK7uNglLnWc0xxXCWzk6Bl2XR9o-RprJrTm02PRy-laFJJQkWcIbwVMrq7u4q0cMNSt9p6fPY8lO427' // provide your client secret here
+});
+
+var createPay = (payment) => {
+  return new Promise((resolve, reject) => {
+    paypal.payment.create(payment, function (err, payment) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(payment);
+      }
+    });
+  });
+};
 
 async function place (user, data) {
   var client = new Client({
@@ -39,7 +57,7 @@ async function place (user, data) {
   try {
     result = await client.query('INSERT INTO orders(user_id,address_id) VALUES($1,$2) RETURNING id', [uid, data.addr]);
     var orderID = result.rows[0].id;
-    await client.query('INSERT INTO order_products(order_id,product_id,quantity,price) SELECT $1, product_id, quantity, price FROM cart_products WHERE cart_id=$2', [result.rows[0].id, cid]);
+    await client.query('INSERT INTO order_products(order_id,product_id,quantity,price) SELECT $1, product_id, quantity, products.price FROM cart_products join products on product_id = products.id WHERE cart_id=$2', [result.rows[0].id, cid]);
   } catch (err) {
     console.log(err);
     return 'Order could not be placed';
@@ -59,22 +77,59 @@ async function place (user, data) {
     result = await client.query('SELECT price,quantity FROM order_products WHERE order_id=$1', [orderID]);
     for (var k = 0; k < result.rowCount; k++) {
       total += result.rows[k].price / 100 * result.rows[k].quantity;
-      total = total.toFixed(2);
     }
-
-    await client.query('INSERT INTO payments(order_id,type,amount) values($1,$2,$3)', [orderID, data.type, Number(total) * 100]);
+    console.log(total);
+    total = total.toFixed(2);
+    result = await client.query('INSERT INTO payments(order_id,type,amount) values($1,$2,$3) RETURNING id', [orderID, data.type, Math.round(total * 100)]);
   } catch (err) {
     console.log(err);
     return 'Order could not be placed';
   }
 
-  try {
-    await client.query('DELETE FROM cart_products WHERE cart_id=$1', [cid]);
-    await client.query('DELETE FROM carts WHERE cart_id=$1', [cid]);
-  } catch (err) {
-    console.log(err);
+  if (data.type === '0') {
+    // create payment object
+    var payment = {
+      intent: 'authorize',
+      payer: {
+        payment_method: 'paypal'
+      },
+      redirect_urls: {
+        return_url: 'http://localhost:8080/PaySuccess',
+        cancel_url: 'http://localhost:8080/err'
+      },
+      transactions: [{
+        amount: {
+          total: total,
+          currency: 'USD'
+        },
+        description: 'Order with ID' + orderID
+      }]
+    };
+
+    // call the create Pay method
+    var returnUrl;
+    await createPay(payment)
+      .then((transaction) => {
+        var id = transaction.id;
+        var links = transaction.links;
+        var counter = links.length;
+        while (counter--) {
+          if (links[counter].method === 'REDIRECT') {
+          // redirect to paypal where user approves the transaction
+            returnUrl = links[counter].href;
+            return;
+          }
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        returnUrl = '/err';
+      });
+  } else if (data.type === 2) {
+    // handle card
   }
-  return 'Order placed';
+
+  return { returnUrl: returnUrl, id: result.rows[0].id };
 }
 
 async function changeStatus (status, id) {
@@ -86,8 +141,24 @@ async function changeStatus (status, id) {
   try {
     await client.query('UPDATE orders SET status=$1 WHERE id=$2', [status, id]);
     if (status === 2) {
-      await client.query('UPDATE payments SET is_paid=true, time_paid=NOW() WHERE order_id=$2 AND status=3', [status, id]);
+      await client.query('UPDATE payments SET is_paid=true, time_paid=NOW() WHERE order_id=$1', [id]);
     }
+  } catch (err) {
+    console.log(err);
+    return 'Order status could not be changed';
+  }
+}
+
+async function paid (id) {
+  var client = new Client({
+    connectionString: connectionString
+  });
+
+  client.connect();
+  try {
+    console.log('about to be paid');
+    console.log(id);
+    await client.query('UPDATE payments SET is_paid=true, time_paid=NOW() WHERE id=$1', [id]);
   } catch (err) {
     console.log(err);
     return 'Order status could not be changed';
@@ -112,5 +183,6 @@ async function getPayTypes () {
 module.exports = {
   place,
   changeStatus,
-  getPayTypes
+  getPayTypes,
+  paid
 };
