@@ -2,6 +2,8 @@ const { Client } = require('pg');
 const connectionString = require('./connector.js').connectionString;
 var convert = require('./convert');
 var paypal = require('paypal-rest-sdk');
+var server = require('./server_address').server;
+var port = require('./server_address').port;
 paypal.configure({
   mode: 'sandbox', // sandbox or live
   client_id: 'Af84lwtHLfjxnC1cMgUfwfbLvyZc17LIriaadXfkx5RtMi24w1jfTiZQfJjE5JAcvBKsHdm3FUjfJP4l', // please provide your client id here
@@ -94,8 +96,8 @@ async function place (user, data) {
         payment_method: 'paypal'
       },
       redirect_urls: {
-        return_url: 'http://localhost:8080/PaySuccess',
-        cancel_url: 'http://localhost:8080/err'
+        return_url: 'http://' + server + ':' + port + '/PaySuccess',
+        cancel_url: 'http://' + server + ':' + port + '/err'
       },
       transactions: [{
         amount: {

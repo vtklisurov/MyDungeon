@@ -18,7 +18,7 @@ async function checkData (data) {
   if (data.pass !== data.pass2) {
     return 'Passwords do not match';
   }
-console.log(data.pass)
+
   client.connect();
   var result = await client.query('SELECT username, email FROM users WHERE username=$1 OR username IN (SELECT username FROM staff WHERE username=$1)', [data.uname]);
 

@@ -3,7 +3,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-$db = pg_connect("host=localhost port=5432 dbname=mydungeon user=postgres password=9810017583");
+$db = pg_connect("host=localhost port=5432 dbname=store user=postgres password=9810017583");
 $entries = 10000;
 $minstock = 0;
 $maxstock = 100;
