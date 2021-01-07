@@ -14,6 +14,7 @@ async function generateHTML () {
   }
   var numprod;
   if (result.rowCount === 0) {
+	  console.log("empty response")
     return 'Error in the database';
   }
   if (result.rowCount > 100) {
@@ -30,6 +31,7 @@ async function generateHTML () {
     obj.prod.push({});
     obj.prod[i].img = result.rows[i].image_loc;
     obj.prod[i].name = result.rows[i].name;
+	obj.prod[i].description = result.rows[i].description;
     obj.prod[i].price = price.toFixed(2);
     obj.prod[i].id = result.rows[i].id;
   }

@@ -1,4 +1,4 @@
-// var app = require('http').createServer(createServer);
+//var app = require('http').createServer(createServer);
 var path = require('path');
 var homepage = require('./home');
 var verify = require('./verify');
@@ -17,6 +17,9 @@ var cart = require('./carts.js');
 var schedule = require('node-schedule');
 var addr = require('./addr');
 var order = require('./order');
+const http = require('http');
+const serverAddr = require('./server_address.js').server;
+
 
 schedule.scheduleJob('0 0 * * *', function () {
   register.deleteUnverified();
@@ -25,12 +28,16 @@ schedule.scheduleJob('0 0 * * *', function () {
 
 var images = path.join(__dirname, 'images');
 var publicfiles = path.join(__dirname, 'public');
+
+
+
 app.use(session({
   secret: 'idk',
-  store: new RedisStore({ host: 'localhost', port: 6379, client: client, ttl: 260 }),
+  store: new RedisStore({ host: serverAddr, port: 6379, client: client, ttl: 260 }),
   saveUninitialized: false,
   resave: false
 }));
+
 app.use(myParser.urlencoded({ extended: true }));
 app.use('/images', express.static(images));
 app.use('/public', express.static(publicfiles));

@@ -4,6 +4,8 @@ var bcrypt = require('bcrypt');
 var saltrounds = 12;
 const { Client } = require('pg');
 const connectionString = require('./connector.js').connectionString;
+const serverAddr = require('./server_address.js').server;
+const serverPort= require('./server_address.js').port;
 
 async function checkData (data) {
   var client = new Client({
@@ -16,7 +18,7 @@ async function checkData (data) {
   if (data.pass !== data.pass2) {
     return 'Passwords do not match';
   }
-
+console.log(data.pass)
   client.connect();
   var result = await client.query('SELECT username, email FROM users WHERE username=$1 OR username IN (SELECT username FROM staff WHERE username=$1)', [data.uname]);
 
@@ -37,8 +39,9 @@ async function saveUser (username, pass, fname, lname, email, isAdmin) {
     connectionString: connectionString
   });
 
+  
   var hash = await md5(Math.floor(Math.random() * 1000));
-
+ console.log(client)
   bcrypt.hash(pass, saltrounds, function (err, hashedpass) {
     if (err) {
       return 'Error with the password hashing';
@@ -72,10 +75,10 @@ async function saveUser (username, pass, fname, lname, email, isAdmin) {
   });
 
   var mailOptions = {
-    from: 'online_store_task@gmail.com',
+    from: 'MyDungeon@gmail.com',
     to: email,
     subject: 'Account Verification',
-    text: 'Please click this link to verify your account http://localhost:8080/verify/' + email + '/' + hash
+    text: 'Please click this link to verify your account http://' + serverAddr + ':' + serverPort + '/verify/' + email + '/' + hash
   };
 
   transporter.sendMail(mailOptions, function (error, info) {
