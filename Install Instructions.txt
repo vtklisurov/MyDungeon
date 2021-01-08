@@ -1,5 +1,7 @@
+Install Python
+
 Install node.js: https://nodejs.org/en/
-	Install necessary packages by running these comands in the Terminal/Command Prompt (I think that's all of them):
+	Install necessary packages by running these commands in the Terminal/Command Prompt (I think that's all of them):
 		npm i async
 		npm i bcrypt@5.0.0
 		npm i body-parser
@@ -27,7 +29,7 @@ Open connector.js and edit the connection string to match the credentials for yo
 'postgresql://<username>:<pass>@<server>:<port>/<db_name>'
 (please don't push that to master)
 
-Install redis server: https://github.com/dmajkic/redis/downloads
+Install redis server: windows - https://github.com/dmajkic/redis/downloads
 	Run redis-server.exe. It has to be running at all times for the site to work (I think)
 	
 Open the Terminal/Command Prompt in the root directory of the site and run the command "node app.js". This will get the server running. 
