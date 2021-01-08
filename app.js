@@ -19,6 +19,7 @@ var addr = require('./addr');
 var order = require('./order');
 const http = require('http');
 const serverAddr = require('./server_address.js').server;
+const serverPort = require('./server_address.js').port;
 
 
 schedule.scheduleJob('0 0 * * *', function () {
@@ -242,4 +243,4 @@ app.get('/verify/:email/:hash', function (request, response) {
   }
 });
 
-app.listen(8080);
+app.listen(serverPort);
