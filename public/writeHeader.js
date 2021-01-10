@@ -4,9 +4,9 @@ document.write(`
     MyDungeon
   </div>
   <div id="headerBtns">
-      <div id="cartdiv">
+      <div id="cartdiv" class="containerDiv">
       </div>
-      <div id="logindiv">
+      <div id="logindiv" class="containerDiv">
       </div>
   </div>
 </div>

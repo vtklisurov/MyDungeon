@@ -74,17 +74,21 @@ div {
     align-items: center;
     justify-content: center;
 }
-#logindiv {
+.containerDiv{
     width: 10rem;
     height: 3rem;
-    /* margin: 4%; */
+    width: 10rem;
+    height: 3rem;
+}
+/* #logindiv {
+
+    margin: 4%;
 }
 
 #cartdiv {
-    width: 10rem;
-    height: 3rem;
-    /* margin: 4%; */
-}
+
+    margin: 4%;
+} */
 #siteName {
     font-size: 40px;
 }
@@ -99,5 +103,5 @@ div {
     padding: 4%;
 }
 .headerBtn:hover {
-    background-color: azure;
+    background-color: lightblue;
   }
