@@ -7,16 +7,17 @@
 }
 #content > form {
     padding: 5%;
+    padding-top: 1%;
     border-radius: 1rem;
 
     color: white;
     background-color: black;
 }
 
-#usernameGroup{
+/* #usernameGroup{
     padding-bottom: 4%;
-}
-#username{
+} */
+/* #username{
     width: 100%;
     border: none;
 
@@ -24,12 +25,25 @@
     padding: 2%;
 
     font-size: medium;
-}
+} */
 
-#passwordGroup{
+/* #passwordGroup{
+    padding-bottom: 4%;
+} */
+.inputGroup{
     padding-bottom: 4%;
 }
-#password{
+/* #password{
+    width: 100%;
+    border: none;
+
+    border-radius: 1rem;
+    padding: 2%;
+
+    font-size: medium;
+} */
+
+.inputField {
     width: 100%;
     border: none;
 

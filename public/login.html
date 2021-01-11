@@ -73,13 +73,14 @@
   <script src="public/writeHeader.js"></script>
   <div id="content">
     <form autocomplete="off" id="loginform" action="login.php" method="POST" >
-      <div id="usernameGroup">
+      <h1>Login</h1>
+      <div class="inputGroup">
         <label for="username">Username:</label>
-        <input type="text" id="username" name="uname"/><br>
+        <input type="text" id="username" class="inputField" name="uname"/><br>
       </div>
-      <div id="passwordGroup">
+      <div class="inputGroup">
         <label for="password">Password:</label>
-        <input type="password" id="password" name="pass"/><br>
+        <input type="password" id="password" class="inputField" name="pass"/><br>
       </div>
       <input type="button" id="login" class="button" value="Login" onclick="submitForm()" />
       <label style="display:inline" for="register">If you don't have an account, please register: </label>
