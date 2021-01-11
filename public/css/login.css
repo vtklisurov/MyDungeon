@@ -1,0 +1,71 @@
+#content{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    height: 50rem;
+}
+#content > form {
+    padding: 5%;
+    padding-top: 1%;
+    border-radius: 1rem;
+
+    color: white;
+    background-color: black;
+}
+
+/* #usernameGroup{
+    padding-bottom: 4%;
+} */
+/* #username{
+    width: 100%;
+    border: none;
+
+    border-radius: 1rem;
+    padding: 2%;
+
+    font-size: medium;
+} */
+
+/* #passwordGroup{
+    padding-bottom: 4%;
+} */
+.inputGroup{
+    padding-bottom: 4%;
+}
+/* #password{
+    width: 100%;
+    border: none;
+
+    border-radius: 1rem;
+    padding: 2%;
+
+    font-size: medium;
+} */
+
+.inputField {
+    width: 100%;
+    border: none;
+
+    border-radius: 1rem;
+    padding: 2%;
+
+    font-size: medium;
+}
+
+.button {
+    all: none;
+    border: none;
+    background-color: white;
+    font-size: large;
+
+    height: 100%;
+    width: 100%;
+    padding: 4%;
+}
+#login{
+    margin-bottom: 5%;
+}
+.button:hover {
+    background-color: lightblue;
+}

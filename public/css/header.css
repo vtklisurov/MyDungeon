@@ -1,0 +1,107 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.column {
+    float: left;
+    width: 25%;
+    padding: 0 10px;
+}
+
+.row {margin: 0 -5px;}
+
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.card {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    max-width: 300px;
+    margin: auto;
+    text-align: center;
+    font-family: arial;
+}
+
+.price {
+    color: grey;
+    font-size: 22px;
+}
+
+.card button {
+    border: none;
+    outline: 0;
+    padding: 12px;
+    color: white;
+    background-color: #000;
+    text-align: center;
+    cursor: pointer;
+    width: 100%;
+    font-size: 18px;
+}
+
+.card button:hover {
+    opacity: 0.7;
+}
+
+div {
+    word-wrap: break-word;
+}
+/* @media screen and (max-width: 800px) {
+    .column {
+        width: 100%;
+        display: block;
+        margin-bottom: 20px;
+} */
+#header {
+    background-color: #000;
+    color: white;
+
+    margin-bottom: 1%;
+    padding: 1rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+#headerBtns{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.containerDiv{
+    width: 10rem;
+    height: 3rem;
+    width: 10rem;
+    height: 3rem;
+}
+/* #logindiv {
+
+    margin: 4%;
+}
+
+#cartdiv {
+
+    margin: 4%;
+} */
+#siteName {
+    font-size: 40px;
+}
+.headerBtn {
+    all: none;
+    border: none;
+    background-color: white;
+    font-size: large;
+
+    height: 100%;
+    width: 100%;
+    padding: 4%;
+}
+.headerBtn:hover {
+    background-color: lightblue;
+  }

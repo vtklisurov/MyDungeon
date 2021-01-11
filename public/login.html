@@ -6,9 +6,30 @@
   }
   </style>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link rel="stylesheet" type="text/css" href="public/css/header.css">
+  <link rel="stylesheet" type="text/css" href="public/css/login.css">
+  <script src="public/loginHeaderAddButtons.js" defer></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
   <script>
   localStorage.removeItem('status');
+
+
+
+  // $(document).ready(function(){
+  //   $.post("islogged", function (status){
+  //     if (status.user!=undefined){
+
+  //       document.getElementById("logindiv").innerHTML = divcontent;
+  //       divcontent = "<button class=\"headerBtn\" onclick=\"location.href = '/cart';\">Cart</button>";
+  //       document.getElementById("cartdiv").innerHTML = divcontent;
+  //     }else if (status.admin!=undefined){
+  //       var divcontent = "<p>Please login as a normal user to purchase</p><button onclick=\"location.href = /login';\">Login</button>";
+  //       document.getElementById("logindiv").innerHTML = divcontent;
+  //     } else {
+  //       var divcontent = "<button class=\"headerBtn\" onclick=\"location.href = '/login';\">Login</button>";
+  //       document.getElementById("logindiv").innerHTML = divcontent;
+  //     }
+  //   });
 
   $(document).ready(function(){
     $.post("islogged", function (status){
@@ -49,19 +70,21 @@
   </script>
 </head>
 <body>
+  <script src="public/writeHeader.js"></script>
   <div id="content">
     <form autocomplete="off" id="loginform" action="login.php" method="POST" >
-      <div>
+      <h1>Login</h1>
+      <div class="inputGroup">
         <label for="username">Username:</label>
-        <input type="text" id="username" name="uname"/><br>
+        <input type="text" id="username" class="inputField" name="uname"/><br>
       </div>
-      <div>
+      <div class="inputGroup">
         <label for="password">Password:</label>
-        <input type="password" id="password" name="pass"/><br>
+        <input type="password" id="password" class="inputField" name="pass"/><br>
       </div>
-      <input type="button" id="login" value="Login" onclick="submitForm()" />
+      <input type="button" id="login" class="button" value="Login" onclick="submitForm()" />
       <label style="display:inline" for="register">If you don't have an account, please register: </label>
-      <input style="display:inline" type="button" id="register" value="Register" onclick="goToRegister()" />
+      <input style="display:inline" type="button" id="register" class="button" value="Register" onclick="goToRegister()" />
     </form>
   </div>
 </body>
