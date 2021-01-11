@@ -94,6 +94,8 @@ app.post('/login', function (request, response) {
   var promise = login.checkLogin(request.body.uname, request.body.pass);
   promise.then(function (value) {
     if (value === 'Success') {
+		console.log(request.session);
+		//console.log(request);
       request.session.user = request.body.uname;
     } else if (value === 'Admin') {
       request.session.admin = request.body.uname;
@@ -208,9 +210,17 @@ app.post('/checkStock', async function (request, response) {
 app.post('/register', function (request, response) {
   try {
     var promise = register.checkData(request.body);
+	
     promise.then(function (value) {
+		console.log(response);
+		console.log(response.headersSent);
       if (value === 'All good') {
+		console.log("saveUser");
+		console.log(response.headersSent);
         register.saveUser(request.body.uname, request.body.pass, request.body.fname, request.body.lname, request.body.email, request.session.admin);
+		console.log(response.headersSent);
+		console.log("sendResponse");
+		
         response.send(value);
       } else {
         response.send(value);
@@ -218,6 +228,7 @@ app.post('/register', function (request, response) {
       response.end();
     });
   } catch (err) {
+	  
     response.send(err.message);
   } finally {
     response.end();

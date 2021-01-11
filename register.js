@@ -35,17 +35,19 @@ async function checkData (data) {
 }
 
 async function saveUser (username, pass, fname, lname, email, isAdmin) {
-  var client = new Client({
-    connectionString: connectionString
-  });
+
 
   
   var hash = await md5(Math.floor(Math.random() * 1000));
- console.log(client)
+console.log("hashing pass");
   bcrypt.hash(pass, saltrounds, function (err, hashedpass) {
     if (err) {
       return 'Error with the password hashing';
     }
+	var client = new Client({
+		connectionString: connectionString
+	});
+	
     client.connect();
     if (isAdmin) {
       client.query('INSERT INTO staff (username, pass, fname, lname, email) VALUES ($1,$2,$3,$4,$5)', [username, hashedpass, fname, lname, email], function (err, result) {
@@ -56,6 +58,7 @@ async function saveUser (username, pass, fname, lname, email, isAdmin) {
         client.end();
       });
     } else {
+		console.log("inserting into db");
       client.query('INSERT INTO users (username, pass, fname, lname, email, hash) VALUES ($1,$2,$3,$4,$5,$6)', [username, hashedpass, fname, lname, email, hash], function (err, result) {
         if (err) {
           console.log(err);

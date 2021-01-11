@@ -23,14 +23,14 @@ Install node.js: https://nodejs.org/en/
 	
 Install PostgreSQL: https://www.postgresql.org/download/
 	Create a new database in postgre
-	Run database_script.sql to set up the database (It's empty. You might want to add some placeholder products. I have a php script for that, but it needs an Apache server)
+	in PgAdmin4 click Tools->Restore and select the store_db file (hope this works)
 	
 Open connector.js and edit the connection string to match the credentials for your database. 
 'postgresql://<username>:<pass>@<server>:<port>/<db_name>'
 (please don't push that to master)
 
-Install redis server: windows - https://github.com/dmajkic/redis/downloads
-	Run redis-server.exe. It has to be running at all times for the site to work (I think)
+Install redis server: windows - https://github.com/microsoftarchive/redis/releases/tag/win-3.0.504
+	Check the checkbox to add the install path to the PATH variable during install.
 	
 Open the Terminal/Command Prompt in the root directory of the site and run the command "node app.js". This will get the server running. 
 (Should be running at all times for the site to work. Needs to be reran if server files are edited)
