@@ -19,6 +19,8 @@ Open connector.js and edit the connection string to match the credentials for yo
 Install redis server: windows - https://github.com/microsoftarchive/redis/releases/tag/win-3.0.504
 	Check the checkbox to add the install path to the PATH variable during install.
 	
+Open mail_credentials.js and input the details of the mail account the account verification email will be send from (please don't push to origin)
+	
 Open the Terminal/Command Prompt in the root directory of the site and run the command "node app.js". This will get the server running. 
 (Should be running at all times for the site to work. Needs to be reran if server files are edited)
 
