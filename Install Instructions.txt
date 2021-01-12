@@ -2,26 +2,14 @@ Install Python
 
 Install node.js: https://nodejs.org/en/
 	Install necessary packages by running these commands in the Terminal/Command Prompt (I think that's all of them):
-		npm i async
-		npm i bcrypt@5.0.0
-		npm i body-parser
-		npm i connect-redis
-		npm i express 
-		npm i express-session 
+		npm i async bcrypt@5.0.0 body-parser connect-redis express express-session md5 node-postgres@latest node-schedule nodemailer paypal-rest-sdk pg@latest pg-promise@latest redis redis-server  
 		npm i formidable //not sure if necessary
 		npm i jquery //not sure if necessary
 		npm i mustache //not sure if necessary
-		npm i md5
-		npm i node-postgres@latest
-		npm i node-schedule
-		npm i nodemailer
-		npm i paypal-rest-sdk
-		npm i pg@latest
-		npm i pg-promise
-		npm i redis
-		npm i redis-server
+		 
 	
 Install PostgreSQL: https://www.postgresql.org/download/
+	Create a new database
 	In PgAdmin4 click Tools->Restore and select the store_db file (hope this works)
 	
 Open connector.js and edit the connection string to match the credentials for your database. 
