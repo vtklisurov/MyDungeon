@@ -22,8 +22,7 @@ Install node.js: https://nodejs.org/en/
 		npm i redis-server
 	
 Install PostgreSQL: https://www.postgresql.org/download/
-	Create a new database in postgre
-	in PgAdmin4 click Tools->Restore and select the store_db file (hope this works)
+	In PgAdmin4 click Tools->Restore and select the store_db file (hope this works)
 	
 Open connector.js and edit the connection string to match the credentials for your database. 
 'postgresql://<username>:<pass>@<server>:<port>/<db_name>'
