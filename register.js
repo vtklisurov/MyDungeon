@@ -6,6 +6,7 @@ const { Client } = require('pg');
 const connectionString = require('./connector.js').connectionString;
 const serverAddr = require('./server_address.js').server;
 const serverPort= require('./server_address.js').port;
+const mailCredentials = require ('./mail_credentials.js');
 
 async function checkData (data) {
   var client = new Client({
@@ -70,10 +71,10 @@ console.log("hashing pass");
   });
 
   var transporter = nodemailer.createTransport({
-    service: 'gmail',
+    service: mailCredentials.service,
     auth: {
-      user: 'vtklisurov@gmail.com',
-      pass: 'Dell+Toshib@123'
+      user: mailCredentials.email,
+      pass: mailCredentials.pass
     }
   });
 
