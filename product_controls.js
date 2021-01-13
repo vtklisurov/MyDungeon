@@ -1,6 +1,7 @@
 const { Client } = require('pg');
 const connectionString = require('./connector.js').connectionString;
-var fs = require('fs');
+//var fs = require('fs');
+var mv = require('mv');
 
 function update (toUpdate, files) {
   var client = new Client({
@@ -13,7 +14,7 @@ function update (toUpdate, files) {
     pic = files.pic.name;
     ext = files.pic.name.split('.').pop();
     var oldpath = files.pic.path;
-    var newpath = '/home/velin/Documents/Online_Store/images/' + toUpdate.pid + '.' + ext;
+    var newpath = './images/' + toUpdate.pid + '.' + ext;
     fs.rename(oldpath, newpath, function (err) {
       if (err) {
         throw err;
@@ -46,7 +47,7 @@ function add (toAdd, files) {
     connectionString: connectionString
   });
   client.connect();
-  client.query('INSERT INTO products (name,description,stock,price) VALUES ($1,$2,$3,$4) RETURNING id', [toAdd.name, toAdd.description, toAdd.stock, toAdd.price * 100], function (err, result) {
+  client.query('INSERT INTO products (id, name,description,stock,price) VALUES ((select MAX(id) from products) + 1, $1,$2,$3,$4) RETURNING id', [toAdd.name, toAdd.description, toAdd.stock, toAdd.price * 100], function (err, result) {
     if (err) {
       console.log('From the adding:');
       console.log(err);
@@ -58,8 +59,8 @@ function add (toAdd, files) {
       pic = files.pic.name;
       ext = files.pic.name.split('.').pop();
       var oldpath = files.pic.path;
-      var newpath = '/home/velin/Documents/Online_Store/images/' + result.rows[0].id + '.' + ext;
-      fs.rename(oldpath, newpath, function (err) {
+      var newpath = './images/' + result.rows[0].id + '.' + ext;
+      mv(oldpath, newpath, function (err) {
         if (err) {
           throw err;
         }

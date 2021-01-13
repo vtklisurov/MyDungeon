@@ -105,7 +105,7 @@ app.post('/login', function (request, response) {
   });
 });
 
-app.post('/logout', function (request, response) {
+app.get('/logout', function (request, response) {
   if (request.session.user || request.session.admin) {
     request.session.destroy();
     response.redirect('/login');
