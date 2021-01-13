@@ -28,7 +28,7 @@ function update (toUpdate, files) {
       if (err) {
         console.log(err);
         return 'Error in the database';
-      }
+      } else return 'Success';
       client.end();
     });
   } else {
@@ -36,7 +36,7 @@ function update (toUpdate, files) {
       if (err) {
         console.log(err);
         return 'Error in the database';
-      }
+      } else return 'Success';
       client.end();
     });
   }
@@ -52,7 +52,7 @@ function add (toAdd, files) {
       console.log('From the adding:');
       console.log(err);
       return 'Error in the database';
-    }
+    } else return 'Success';
     var ext;
     var pic;
     if (files.pic) {
@@ -75,7 +75,7 @@ function add (toAdd, files) {
           console.log('From the adding(part 2):');
           console.log(err);
           return 'Error in the database';
-        }
+        } else return 'Success';
         client.end();
       });
     }
@@ -91,7 +91,7 @@ function remove (toRemove) {
     if (err) {
       console.log(err);
       return 'Error in the database';
-    }
+    } else return 'Success';
     client.end();
   });
 }
