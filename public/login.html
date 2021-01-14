@@ -41,7 +41,7 @@
   })
 
   function logout(){
-    $.post("logout", function(res){
+    $.get("/logout", function(res){
       window.location.href='/login';
     });
   }
