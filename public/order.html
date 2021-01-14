@@ -5,14 +5,18 @@
     margin-bottom: 10px;
   }
   </style>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link rel="stylesheet" type="text/css" href="public/css/order.css">
+  <link rel="stylesheet" type="text/css" href="public/css/buttons.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
   <script src="https://cdn.rawgit.com/janl/mustache.js/master/mustache.js"></script>
   <script>
   $(document).ready(function(){
     try{
       $.post('/fillDropdowns', function(res){
-
+        if (res.addresses == 0) {
+          window.location.href="/newAddress";
+        }
         var temp = $('#payTemp').html();
         var html = Mustache.render(temp, res);
         document.getElementById('paymentType').innerHTML=html;
@@ -64,11 +68,14 @@
 
 </head>
 <body>
+  <!-- <div id="formDiv">
+
+  </div> -->
   <form id='input' action='/placeOrder' method='post'>
     <label>Select payment type:</label>
     <select id="paymentType" name='type'></select><br>
     <label>Select address:</label>
     <select id="address" name='addr'></select><br>
-    <input type='submit' id="buy" onclick="placeOrder()" value='Buy'>
+    <input type='submit' class="button" id="buy" onclick="placeOrder()" value='Buy'>
   </form>
 </body>
