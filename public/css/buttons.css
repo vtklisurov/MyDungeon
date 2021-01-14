@@ -1,0 +1,29 @@
+.button {
+    all: none;
+    border: none;
+    background-color: white;
+    font-size: large;
+
+    height: 100%;
+    width: 100%;
+    padding: 4%;
+}
+.button:hover {
+    background-color: lightblue;
+}
+
+
+.buttonReverse {
+    all: none;
+    border: none;
+    color: white;
+    background-color: black;
+    font-size: large;
+
+    height: 100%;
+    width: 100%;
+    padding: 4%;
+}
+.buttonReverse:hover {
+    background-color: rgb(41, 41, 41);
+}

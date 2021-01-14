@@ -13,6 +13,10 @@
     }
   </style>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link rel="stylesheet" type="text/css" href="public/css/header.css">
+  <link rel="stylesheet" type="text/css" href="public/css/buttons.css">
+  <link rel="stylesheet" type="text/css" href="public/css/cart.css">
+  <script src="public/loginHeaderAddButtons.js" defer></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
   <script src="https://cdn.rawgit.com/janl/mustache.js/master/mustache.js"></script>
   <script>
@@ -53,12 +57,18 @@
         document.getElementById("buy").style.display="none";
         document.getElementById("empty").style.display="none";
         return;
+      } else {
+        // div.innerHTML='<p>Your shopping cart is empty</p>';
+        document.getElementById("title").innerHTML = 'Products in your cart';
       }
 
       var temp = $('#cartTemp').html();
+      var temp2 = $('#cartTemp2').html();
       var html = Mustache.render(temp, cart);
+      var html2 = Mustache.render(temp2, cart);
 
       document.getElementById("itemsdiv").innerHTML = html;
+      document.getElementById("totaldiv").innerHTML = html2;
     })
   }
 
@@ -77,22 +87,34 @@
   <script type="text/template" id="cartTemp">
     {{#product}}
     <div class="product">
-      <pre>Product: {{name}}
-Price: {{price}}
-Quantity: {{quantity}}
-Sum: {{sum}}</pre>
-    <button onclick="removeProduct({{id}}, false)">Remove</button>
-    <button onclick="removeProduct({{id}}, true)">Remove All</button>
+      <!-- <img class = "itemStat" src="{{img}}" alt={{name}} style="width:100%"> -->
+      <div class = "itemStat">Product: {{name}}</div>
+      <div class = "itemStat">Price: {{price}}</div>
+      <div class = "itemStat">Quantity: {{quantity}}</div>
+      <div class = "itemStat">Sum: {{sum}}</div>
+      <div class = "productButtons">
+        <button class="buttonReverse" onclick="removeProduct({{id}}, false)">Remove</button>
+        <button class="buttonReverse" onclick="removeProduct({{id}}, true)">Remove All</button>
+      </div>
     </div>
     {{/product}}
-    <pre>Total price: {{total}}</pre>
+    <!-- <pre>Total price: {{total}}</pre> -->
+  </script>
+  <script type="text/template" id="cartTemp2">
+    Total price: {{total}}$
   </script>
 </head>
 
 <body>
+  <script src="public/writeHeader.js"></script>
+  <div id="title"></div>
   <div id="itemsdiv"></div>
-  <button onclick="window.location.href='/'">Home</button>
-  <button id="buy" onclick="buy()">Buy</button>
-  <div></div>
-  <button id="empty" onclick="empty()">Empty cart</button>
+  <div id = "options">
+    <div id="totaldiv"></div>
+    <button class = "button" id="buy" onclick="buy()">Buy</button>
+    <!-- <div></div> -->
+    <button class = "button" id="empty" onclick="empty()">Empty cart</button>
+  </div>
+  <!-- <button onclick="window.location.href='/'">Home</button> -->
+
 </body>
