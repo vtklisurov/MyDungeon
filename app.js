@@ -185,7 +185,9 @@ app.post('/placeOrder', async function (request, response) {
       var result = await order.place(request.session.user, request.body);
       request.session.pay_id = result.id;
       response.redirect(result.returnUrl);
-    }
+    } else {
+		response.sendFile('public/paySuccess.html', { root: __dirname });
+	}
   } catch (err) {
     console.log(err);
     response.send('An error occured');
