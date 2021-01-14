@@ -15,14 +15,16 @@ async function saveAddr (data, user) {
   }
 
   var uid = await convert.unameToUid(user);
-
-  try {
-    await client.query('INSERT INTO addresses(user_id,country,postal,city,str_address) VALUES($1,$2,$3,$4,$5)', [uid, data.country, data.postal, data.city, data.straddr]);
-  } catch (err) {
-    return 'There was a problem saving the address';
-  }
-
-  return 'Address saved';
+	client.connect();
+    await client.query('INSERT INTO addresses(user_id,country,postal,city,str_address) VALUES($1,$2,$3,$4,$5)', [uid, data.country, data.postal, data.city, data.straddr]), function (err, result) {
+		if (err) {
+			console.log(err)
+			return 'There was a problem saving the address';
+		} else {
+			console.log('address saved');
+			return 'Address saved';
+		};
+	}
 }
 
 async function getAddr (user) {

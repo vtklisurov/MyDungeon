@@ -57,7 +57,7 @@ async function place (user, data) {
   }
 
   try {
-    result = await client.query('INSERT INTO orders(user_id,address_id) VALUES($1,$2) RETURNING id', [uid, data.addr]);
+    result = await client.query('INSERT INTO orders(cart_id,user_id,address_id) VALUES($1,$2,$3) RETURNING id', [cid, uid, data.addr]);
     var orderID = result.rows[0].id;
     await client.query('INSERT INTO order_products(order_id,product_id,quantity,price) SELECT $1, product_id, quantity, products.price FROM cart_products join products on product_id = products.id WHERE cart_id=$2', [result.rows[0].id, cid]);
   } catch (err) {

@@ -2,4 +2,7 @@
 node_modules
 package-lock.json
 package.json
-
+images
+connector.js
+mail_credentials.js
+server_address.js

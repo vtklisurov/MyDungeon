@@ -73,13 +73,13 @@ app.get('/login', function (request, response) {
 
 app.get('/admin', function (request, response) {
   response.sendFile('public/admin_controls.html', { root: __dirname });
-  // if (request.session.admin) {
-  //   response.sendFile('public/admin_controls.html', { root: __dirname });
-  // } else if (request.session.user) {
-  //   response.redirect('/');
-  // } else {
-  //   response.redirect('/login');
-  // }
+  if (request.session.admin) {
+    response.sendFile('public/admin_controls.html', { root: __dirname });
+  } else if (request.session.user) {
+    response.redirect('/');
+  } else {
+    response.redirect('/login');
+  }
 });
 
 app.get('/profile', function (request, response) {
@@ -94,8 +94,6 @@ app.post('/login', function (request, response) {
   var promise = login.checkLogin(request.body.uname, request.body.pass);
   promise.then(function (value) {
     if (value === 'Success') {
-		console.log(request.session);
-		//console.log(request);
       request.session.user = request.body.uname;
     } else if (value === 'Admin') {
       request.session.admin = request.body.uname;
@@ -105,7 +103,7 @@ app.post('/login', function (request, response) {
   });
 });
 
-app.post('/logout', function (request, response) {
+app.get('/logout', function (request, response) {
   if (request.session.user || request.session.admin) {
     request.session.destroy();
     response.redirect('/login');
