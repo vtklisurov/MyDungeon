@@ -43,7 +43,8 @@ async function getAddr (user) {
   }
   if (result.rowCount === 0) {
     var err = new Error("User doesn't have an address");
-    throw err;
+	
+    return 0;
   } else {
     return result.rows;
   }
