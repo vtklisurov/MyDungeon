@@ -1,13 +1,22 @@
 <!DOCTYPE html>
+
 <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="public/css/header.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="public/loginHeaderAddButtons.js" defer></script>
 </head>
+
 <body>
-<h1 align="center">
- Success
-</h1>
-<p align="center">A verification email has been sent. Please click the link to verify your account</p>
-<p align="center">You will be redirected shortly</p>
-<script>
-setTimeout(function(){window.location.href="/"},5000)
-</script>
+    <script src="public/writeHeader.js"></script>
+    <h1 align="center">
+        Success
+    </h1>
+    <p align="center">A verification email has been sent. Please click the link to verify your account</p>
+    <p align="center">You will be redirected shortly</p>
+    <script>
+        setTimeout(function() {
+            window.location.href = "/"
+        }, 5000)
+    </script>
 </body>
