@@ -184,8 +184,11 @@ app.post('/placeOrder', async function (request, response) {
     if (request.body.type === '0') {
       var result = await order.place(request.session.user, request.body);
       request.session.pay_id = result.id;
+	  cart.removeAll(request.session.user);
       response.redirect(result.returnUrl);
     } else {
+		var result = await order.place(request.session.user, request.body);
+		cart.removeAll(request.session.user);
 		response.sendFile('public/paySuccess.html', { root: __dirname });
 	}
   } catch (err) {
@@ -207,28 +210,28 @@ app.post('/checkStock', async function (request, response) {
   response.send(await cart.checkStock(request.session.user));
 });
 
-app.post('/register', function (request, response) {
+app.post('/register', async function (request, response) {
   try {
-    var promise = register.checkData(request.body);
+    var status = await register.checkData(request.body);
 	
-    promise.then(function (value) {
-		console.log(response);
-		console.log(response.headersSent);
-      if (value === 'All good') {
+	console.log(response.headersSent);
+      if (status === 'All good') {
 		console.log("saveUser");
 		console.log(response.headersSent);
         register.saveUser(request.body.uname, request.body.pass, request.body.fname, request.body.lname, request.body.email, request.session.admin);
 		console.log(response.headersSent);
 		console.log("sendResponse");
 		
-        response.send(value);
+        response.send(status);
       } else {
-        response.send(value);
+		  console.log(status);
+        response.send(status);
       }
       response.end();
-    });
+
   } catch (err) {
-	  
+	console.log("Error");
+	console.log(err);
     response.send(err.message);
   } finally {
     response.end();
