@@ -2,23 +2,11 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    /* align-content: space-between; */
-    /* margin-bottom: -20px; */
-    /* flex- */
-
-    /* background-color: black; */
-    /* margin: 20%; */
 }
 #title {
-    /* font-size: 3vw; */
     font-size: 200%;
     text-align: center;
     margin-bottom: 2%;
-}
-#totaldiv {
-
-
-    /* vertical-align: center; */
 }
 #options {
     display: flex;
@@ -32,7 +20,6 @@
     padding-bottom: 1%;
     padding-left: 5vw;
 
-    /* font-size: 1.5vw; */
     font-size: 180%;
 }
 
@@ -46,7 +33,6 @@
     padding-top: 6%;
 
     border-bottom: black;
-    /* border-radius: 4%; */
     border-bottom-style: solid;
 
     text-align: center;
