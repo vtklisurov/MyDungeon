@@ -1,0 +1,21 @@
+body {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+
+    height: 95vh;
+}
+
+form {
+    color:white;
+    background-color: black;
+
+    padding: 5%;
+    border-radius: 1rem;
+
+    font-size: xx-large;
+}
+
+form > * {
+    margin-top: 20%;
+}
