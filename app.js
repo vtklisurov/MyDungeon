@@ -21,9 +21,10 @@ const http = require('http');
 const serverAddr = require('./server_address.js').server;
 const serverPort = require('./server_address.js').port;
 
-
-schedule.scheduleJob('0 0 * * *', function () {
+schedule.scheduleJob('0 0 * * *', async function () {
+	
   register.deleteUnverified();
+
   cart.deleteExpired();
 });
 
@@ -238,23 +239,21 @@ app.post('/register', async function (request, response) {
   }
 });
 
-app.get('/verify/:email/:hash', function (request, response) {
+app.get('/verify/:email/:hash', async function (request, response) {
   try {
     response.writeHead(200, { 'Content-Type': 'text/html' });
-    var status = verify.checkHash(request.params.email, request.params.hash);
-    status.then(function (value) {
-      if (value === 'Ok') {
-        response.write('<p align="center">Your email has been verified</p><p align="center">You will be redirected to the login page shortly</p><script>setTimeout(function(){window.location.href="/login"},5000)</script>');
-      } else {
-        response.write('<p align="center">' + value + '</p>');
-      }
-      response.end();
-    });
+    var status = await verify.checkHash(request.params.email, request.params.hash);
+    
+    if (status === 'Ok') {
+      response.write('<p align="center">Your email has been verified</p><p align="center">You will be redirected to the login page shortly</p><script>setTimeout(function(){window.location.href="/login"},5000)</script>');
+    } else {
+      response.write('<p align="center">' + value + '</p>');
+    }
+    response.end();
   } catch (err) {
     response.send(err.message);
-  } finally {
-    response.end();
-  }
+  } 
+  response.end();
 });
 
 app.listen(serverPort);

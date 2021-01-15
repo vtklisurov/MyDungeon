@@ -45,6 +45,7 @@ console.log("hashing pass");
     if (err) {
       return 'Error with the password hashing';
     }
+	
 	var client = new Client({
 		connectionString: connectionString
 	});
@@ -92,20 +93,25 @@ console.log("hashing pass");
       console.log('Email sent: ' + info.response);
     }
   });
-  client.end();
+
 }
 
 async function deleteUnverified () {
-  var client = new Client({
-    connectionString: connectionString
-  });
-  client.connect();
-  await client.query('DELETE FROM users WHERE status=0 AND "created" < NOW() - INTERVAL \'15 minutes\';', function (err, result) {
+	
+	var client = new Client({
+		connectionString: connectionString
+	});
+	
+    await client.connect();
+  
+  
+  await client.query('DELETE FROM users WHERE status=0 AND created < NOW() - INTERVAL \'minutes\';', function (err, result) {
     if (err) {
+	  console.log("Error from the deleting unverified users")
       console.log(err);
-    }
+    } 
   });
-  client.end();
+  //client.end();
 }
 
 module.exports = {
