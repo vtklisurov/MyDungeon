@@ -10,11 +10,11 @@
   <script>
 
   $(document).ready(function(){
-    // $.post("islogged", function (status){
-    //   if (status.user===undefined){
-    //     document.getElementById("content").innerHTML = 'Please login before adding an address<button onclick="window.location.href='/'">Home</button>';
-    //   }
-    // });
+     $.post("islogged", function (status){
+      if (status.user===undefined){
+         document.getElementById("content").innerHTML = 'Please login before adding an address<button onclick="window.location.href='/'">Home</button>';
+       }
+     });
   })
 
   function submitForm(){
