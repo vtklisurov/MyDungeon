@@ -53,11 +53,11 @@
     if(uname !="" && pass!=""){
       $.post("login", $("#loginform").serialize(), function (status){
         if (status=="Success"){
-          alert("Welcome");
-          window.location.href="/";
+          //alert("Welcome");
+          window.location.href="/";s
         }
         else if (status=="Admin"){
-          alert("Welcome, admin");
+          //alert("Welcome, admin");
           window.location.href="/admin";
         }
         else alert(status);
