@@ -110,19 +110,20 @@ async function addProduct (pid, user) {
 }
 
 async function deleteExpired () {
+	  console.log("Deleting carts");
   var client = new Client({
     connectionString: connectionString
   });
 
   client.connect();
 
-  client.query('DELETE FROM cart_products WHERE cart_id IN (SELECT cart_id from carts WHERE "created" < NOW() - INTERVAL \'2 minutes\')', function (err, result) {
+  client.query('DELETE FROM cart_products WHERE cart_id IN (SELECT cart_id from carts WHERE "created" < NOW() - INTERVAL \'5 hours\')', function (err, result) {
     if (err) {
       console.log('Error when deleting products from expired carts');
       console.log(err);
     }
   });
-  client.query('DELETE FROM carts WHERE "created" < NOW() - INTERVAL \'2 minutes\'', function (err, result) {
+  client.query('DELETE FROM carts WHERE "created" < NOW() - INTERVAL \'5 hours\'', function (err, result) {
     if (err) {
       console.log('Error when deleting expired carts');
       console.log(err);
