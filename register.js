@@ -105,7 +105,7 @@ async function deleteUnverified () {
     await client.connect();
   
   
-  await client.query('DELETE FROM users WHERE status=0 AND created < NOW() - INTERVAL \'minutes\';', function (err, result) {
+  await client.query('DELETE FROM users WHERE status=0 AND created < NOW() - INTERVAL \'15 minutes\';', function (err, result) {
     if (err) {
 	  console.log("Error from the deleting unverified users")
       console.log(err);
