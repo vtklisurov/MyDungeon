@@ -52,7 +52,7 @@ app.get('/register', async function (request, response) {
   }
 });
 
-app.get('/newAddr', async function (request, response) {
+app.get('/newAddress', async function (request, response) {
   response.sendFile('public/newAddress.html', { root: __dirname });
 });
 
@@ -181,20 +181,24 @@ app.get('/paySuccess', async function (request, response) {
 
 app.post('/placeOrder', async function (request, response) {
   try {
-    console.log(request.body);
-    if (request.body.type === '0') {
-      var result = await order.place(request.session.user, request.body);
-      request.session.pay_id = result.id;
-	  cart.removeAll(request.session.user);
-      response.redirect(result.returnUrl);
-    } else {
+	var stock = await cart.checkStock(request.session.user)
+	if (stock !== 'Ok'){
+		response.write('alert(' + stock + ')');
+	} else {
+		if (request.body.type === '0') {
 		var result = await order.place(request.session.user, request.body);
+		request.session.pay_id = result.id;
 		cart.removeAll(request.session.user);
-		response.sendFile('public/paySuccess.html', { root: __dirname });
+		response.redirect(result.returnUrl);
+		} else {
+			var result = await order.place(request.session.user, request.body);
+			cart.removeAll(request.session.user);
+			response.sendFile('public/paySuccess.html', { root: __dirname });
+		}
 	}
   } catch (err) {
-    console.log(err);
-    response.send('An error occured');
+		console.log(err);
+		response.send('An error occured');
   }
 });
 
@@ -247,7 +251,7 @@ app.get('/verify/:email/:hash', async function (request, response) {
     if (status === 'Ok') {
       response.write('<p align="center">Your email has been verified</p><p align="center">You will be redirected to the login page shortly</p><script>setTimeout(function(){window.location.href="/login"},5000)</script>');
     } else {
-      response.write('<p align="center">' + value + '</p>');
+      response.write('<p align="center">' + status + '</p>');
     }
     response.end();
   } catch (err) {
