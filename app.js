@@ -169,7 +169,10 @@ app.post('/removeProduct', async function(request, response) {
 });
 
 app.post('/newAddr', async function(request, response) {
-    response.send(await addr.saveAddr(request.body, request.session.user));
+	var res = await addr.saveAddr(request.body, request.session.user);
+	console.log(res);
+	console.log("sending response");
+    response.send(res);
 });
 
 app.get('/paySuccess', async function(request, response) {
