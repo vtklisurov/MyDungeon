@@ -19,7 +19,7 @@
 
   function submitForm(){
     $.post("/newAddr", $('#addressform').serialize(),function(status){
-      alert(status);
+      window.location.href="/";
     })
   }
   </script>

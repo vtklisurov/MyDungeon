@@ -14,9 +14,9 @@ async function saveAddr (data, user) {
     return 'All fields are required';
   }
 
-  var uid = await convert.unameToUid(user);
+	var uid = await convert.unameToUid(user);
 	client.connect();
-    await client.query('INSERT INTO addresses(user_id,country,postal,city,str_address) VALUES($1,$2,$3,$4,$5)', [uid, data.country, data.postal, data.city, data.straddr]), function (err, result) {
+    await client.query('INSERT INTO addresses(user_id,country,postal,city,str_address) VALUES($1,$2,$3,$4,$5)', [uid, data.country, data.postal, data.city, data.straddr], function (err, result) {
 		if (err) {
 			console.log(err)
 			return 'There was a problem saving the address';
@@ -24,7 +24,7 @@ async function saveAddr (data, user) {
 			console.log('address saved');
 			return 'Address saved';
 		};
-	}
+	});
 }
 
 async function getAddr (user) {
