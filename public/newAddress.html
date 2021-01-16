@@ -6,6 +6,9 @@
     }
   </style>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link rel="stylesheet" type="text/css" href="public/css/login.css">
+  <link rel="stylesheet" type="text/css" href="public/css/buttons.css">
+  <link rel="stylesheet" type="text/css" href="public/css/newAddress.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
   <script>
 
@@ -27,23 +30,24 @@
 <body>
   <div id="content">
     <form autocomplete="off" id="addressform" method="POST" >
+      <h1>Enter address information</h1>
       <div>
         <label for="country">Country:</label>
-        <input type="text" id="country" name="country" required/><br>
+        <input class = "inputField" type="text" id="country" name="country" required/><br>
       </div>
       <div>
         <label for="postal">Postal code:</label>
-        <input type="text" id="postal" name="postal" required/><br>
+        <input class = "inputField" type="text" id="postal" name="postal" required/><br>
       </div>
       <div>
         <label for="city">City:</label>
-        <input type="text" id="fname" name="city" required/><br>
+        <input class = "inputField" type="text" id="fname" name="city" required/><br>
       </div>
       <div>
         <label for="straddr">Street address:</label>
-        <input type="text" id="straddr" name="straddr" required/><br>
+        <input class = "inputField" type="text" id="straddr" name="straddr" required/><br>
       </div>
-      <div id="add"><input type="button" style="display:inline" id="submit" value="Add address" onclick="submitForm(false)" /></div>
+      <div id="add"><input class = "button" type="button" style="display:inline" id="submit" value="Add address" onclick="submitForm(false)" /></div>
     </form>
   </div>
 </body>

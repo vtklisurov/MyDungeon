@@ -72,9 +72,11 @@
   </div> -->
   <form id='input' action='/placeOrder' method='post'>
     <label>Select payment type:</label>
-    <select id="paymentType" name='type'></select><br>
+    <select class="select" id="paymentType" name='type'></select><br>
     <label>Select address:</label>
-    <select id="address" name='addr'></select><br>
+    <select class="select" id="address" name='addr'></select><br>
     <input type='submit' class="button" id="buy" value='Buy'>
+    <button class="button" type="button" onclick="location.href = '/newAddress';">Add new address</button>
+    <!-- <input placeholder="Add new address" class="button" type = "button" onclick="location.href = '/newAddress';"> -->
   </form>
 </body>
