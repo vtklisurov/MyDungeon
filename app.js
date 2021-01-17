@@ -57,7 +57,11 @@ app.get('/newAddress', async function(request, response) {
 });
 
 app.get('/', function(request, response) {
-    response.sendFile('public/home.html', { root: __dirname });
+	  if (request.session.admin) {
+        response.sendFile('public/admin_controls.html', { root: __dirname });
+	  } else {
+		response.sendFile('public/home.html', { root: __dirname });
+	  }
 });
 
 app.post('/homeProducts', async function(request, response) {
