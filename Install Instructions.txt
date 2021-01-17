@@ -3,9 +3,6 @@ Install Python
 Install node.js: https://nodejs.org/en/
 	Install necessary packages by running these commands in the Terminal/Command Prompt (I think that's all of them):
 		npm i async bcrypt@5.0.0 body-parser connect-redis express express-session md5 mv node-postgres@latest node-schedule nodemailer paypal-rest-sdk pg@latest pg-promise@latest redis redis-server  
-		npm i formidable //not sure if necessary
-		npm i jquery //not sure if necessary
-		npm i mustache //not sure if necessary
 		 
 	
 Install PostgreSQL: https://www.postgresql.org/download/
