@@ -48,7 +48,7 @@ function add (toAdd, files) {
     connectionString: connectionString
   });
   client.connect();
-  client.query('INSERT INTO products (id, name,description,stock,price) VALUES ((select MAX(id) from products) + 1, $1,$2,$3,$4) RETURNING id', [toAdd.name, toAdd.description, toAdd.stock, toAdd.price * 100], function (err, result) {
+  client.query('INSERT INTO products (id, name,description,stock,price) VALUES ((select COALESCE(max(id),0) from products)+1, $1,$2,$3,$4) RETURNING id', [toAdd.name, toAdd.description, toAdd.stock, toAdd.price * 100], function (err, result) {
     if (err) {
       console.log('From the adding:');
       console.log(err);

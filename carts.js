@@ -81,7 +81,7 @@ async function addProduct (pid, user) {
   var cid;
   var result = await client.query('SELECT cart_id FROM carts WHERE user_id=$1', [uid]);
   if (result.rowCount === 0) {
-    result = await client.query('INSERT INTO carts (user_id) values ($1) RETURNING cart_id', [uid]);
+    result = await client.query('INSERT INTO carts (cart_id, user_id) values ((select COALESCE(max(cart_id),0) from carts)+1, $1) RETURNING cart_id', [uid]);
     cid = result.rows[0].cart_id;
   } else if (result.rowCount !== 1) {
     var err = Error('Repeating cart_id');
