@@ -57,7 +57,7 @@ async function place (user, data) {
   }
 
   try {
-    result = await client.query('INSERT INTO orders(user_id,address_id) VALUES($1,$2) RETURNING id', [uid, data.addr]);
+    result = await client.query('INSERT INTO orders(ид, user_id,address_id) VALUES((select COALESCE(max(id),0) from orders)+1, $1,$2) RETURNING id', [uid, data.addr]);
     var orderID = result.rows[0].id;
     await client.query('INSERT INTO order_products(order_id,product_id,quantity,price) SELECT $1, product_id, quantity, products.price FROM cart_products join products on product_id = products.id WHERE cart_id=$2', [result.rows[0].id, cid]);
   } catch (err) {
@@ -82,7 +82,7 @@ async function place (user, data) {
     }
     console.log(total);
     total = total.toFixed(2);
-    result = await client.query('INSERT INTO payments(order_id,type,amount) values($1,$2,$3) RETURNING id', [orderID, data.type, Math.round(total * 100)]);
+    result = await client.query('INSERT INTO payments(id, order_id,type,amount) values((select COALESCE(max(id),0) from payments)+1, $1,$2,$3) RETURNING id', [orderID, data.type, Math.round(total * 100)]);
   } catch (err) {
     console.log(err);
     return 'Order could not be placed';
