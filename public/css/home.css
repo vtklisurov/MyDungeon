@@ -1,0 +1,29 @@
+.buttonSrch {
+    all: none;
+    border: thin solid black;
+    background-color: rgb(245 245 245);
+    font-size: large;
+    height: 60%;
+    width: 10%;
+}
+
+.buttonSrch:hover {
+    background-color: lightblue;
+}
+
+.inputField {
+    all: none;
+    font-size: large;
+    padding-left: 2%;
+    padding-right: 2%;
+    height: 60%;
+    width: 60%;
+}
+
+#searchDiv {
+    height: 100px;
+}
+
+.NoResults {
+    font-size: large;
+}
