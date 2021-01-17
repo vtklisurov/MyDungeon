@@ -46,7 +46,7 @@ async function generateHTMLForSearch(searchVal) {
     client.connect();
     try {
         searchVal = '%' + searchVal + '%';
-        var result = await client.query('SELECT * FROM products WHERE for_sale=true and stock>0 and ( name LIKE $1 or description LIKE $1 ) LIMIT 300', [searchVal]);
+        var result = await client.query('SELECT * FROM products WHERE for_sale=true and stock>0 and ( LOWER(name) LIKE LOWER($1) or LOWER(description) LIKE LOWER($1) ) LIMIT 300', [searchVal]);
     } catch (err) {
         return err.message;
     }
