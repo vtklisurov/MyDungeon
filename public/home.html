@@ -27,7 +27,7 @@
         $(document).ready(function() {
             $.post("islogged", function(status) {
                 if (status.user != undefined) {
-                    var divcontent = "<button class=\"headerBtn\" onclick=\"location.href = '/order_history';\">Order history</button>";
+                    var divcontent = "<button class=\"headerBtn\" onclick=\"location.href = '/orderHistory';\">Order history</button>";
                     document.getElementById("logindiv").innerHTML = divcontent;
                     divcontent = "<button class=\"headerBtn\" onclick=\"location.href = '/cart';\">Cart</button>";
                     document.getElementById("cartdiv").innerHTML = divcontent;
