@@ -153,6 +153,14 @@ app.get('/order', async function(request, response) {
     }
 });
 
+app.get('/orderHistory', async function(request, response) {
+    if (request.session.user !== undefined) {
+        response.send(await order.history(request.session.user));
+    } else {
+        response.write('<script>alert("You are not logged in");window.location.href="/login"</script>');
+    }
+});
+
 app.post('/addToCart', async function(request, response) {
     try {
         await cart.addProduct(request.body.pid, request.session.user);

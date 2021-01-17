@@ -68,7 +68,7 @@ async function place (user, data) {
   try {
     result = await client.query('SELECT product_id, quantity FROM cart_products where cart_id=$1', [cid]);
     for (var j = 0; j < result.rowCount; j++) {
-      await client.query('UPDATE products SET stock=stock-$1 where id=$2', [result.rows[j].quanity, result.rows[j].id]);
+      await client.query('UPDATE products SET stock=stock-$1 where id=$2', [result.rows[j].quantity, result.rows[j].id]);
     }
   } catch (err) {
     console.log(err);
@@ -151,6 +151,57 @@ async function changeStatus (status, id) {
   }
 }
 
+async function history (user) {
+	var client = new Client({
+        connectionString: connectionString
+    });
+
+	var uid = await convert.unameToUid(user);
+	
+    client.connect();
+    try {
+        var result = await client.query('select * from order_products inner join orders on orders.id = order_products.order_id join products on order_products.product_id = products.id where user_id = $1', [uid]);
+    } catch (err) {
+        return err.message;
+    }
+    var numprod;
+    if (result.rowCount === 0) {
+        console.log("empty response")
+        return 'Error in the database';
+    }
+
+	var order_price;
+    var obj = {};
+    obj.order = [];
+    for (var i = 0; i < result.rowCount; i++) {
+		order_price = 0;
+        obj.order.push({});
+		if (obj.order.some(e => e.id ===  result.rows[i].order_id)) {
+			continue
+		}
+        obj.order[i].id = result.rows[i].order_id;
+        obj.order[i].products = [];
+		for (var j = 0; j<result.rowCount; j++){
+			obj.order[i].products.push({});
+			if (result.rows[j].order_id === obj.order[i].id){
+				obj.order[i].products[j].name = result.rows[j].name;
+				obj.order[i].products[j].price = result.rows[j].price/100;			
+				obj.order[i].products[j].quantity = result.rows[j].quantity;
+				order_price += (result.rows[j].price*obj.order[i].products[j].quantity)/100;
+			} else { 
+			}
+		}
+        obj.order[i].placed = result.rows[i].placed;
+		obj.order[i].price = order_price;
+		var newArray = obj.order[i].products.filter(value => Object.keys(value).length !== 0);
+		obj.order[i].products = newArray;
+    }
+	var newArray = obj.order.filter(value => Object.keys(value).length !== 0);
+	obj.order = newArray;
+	console.log(obj);
+    return obj;
+}
+
 async function paid (id) {
   var client = new Client({
     connectionString: connectionString
@@ -186,5 +237,6 @@ module.exports = {
   place,
   changeStatus,
   getPayTypes,
-  paid
+  paid,
+  history
 };
