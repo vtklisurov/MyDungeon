@@ -77,7 +77,7 @@ app.get('/login', function(request, response) {
 });
 
 app.get('/admin', function(request, response) {
-    response.sendFile('public/admin_controls.html', { root: __dirname });
+    //response.sendFile('public/admin_controls.html', { root: __dirname });
     if (request.session.admin) {
         response.sendFile('public/admin_controls.html', { root: __dirname });
     } else if (request.session.user) {
