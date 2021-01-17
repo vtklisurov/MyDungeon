@@ -6,7 +6,10 @@
     }
   </style>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link rel="stylesheet" type="text/css" href="public/css/header.css">
+  <link rel="stylesheet" type="text/css" href="public/css/order_history.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+  <script src="https://cdn.rawgit.com/janl/mustache.js/master/mustache.js"></script>
   <script>
 
   $(document).ready(function(){
@@ -35,10 +38,33 @@
     <div class="column">
         <div class="card">
             <!-- <img src="{{img}}" alt={{name}} style="width:100%"> -->
-            <p style="font-size: 30px"><b>{{id}}</b>
+            <div class="productsLabel">Products</div>
+            <p>Quantity : Name</p>
+            <div class="products">
+                {{#products}}
+                <div class="product">
+                    <p>{{quantity}} : {{name}}</p>
+                    <p>Total: {{price}}</p>
+                    <!-- <p>{{quantity}}</p> -->
+                </div>
+                {{/products}}
+            </div>
+            <div class = "row idRow">
+                <div>Id:</div>
+                <div style="font-size: 180%">{{id}}</div>
+            </div>
+            <div class = "row">
+                <div>Date:</div>
+                <div>{{placed}}</div>
+            </div>
+            <div class = "row">
+                <div>Total:</div>
+                <div >{{price}}</div>
+            </div>
+            <!-- <p style="font-size: 30px"><b>{{id}}</b>
                 <p>
-                    <p class="price">${{placed}}</p>
-                    <p>{{price}}</p>
+                    <p class="price">Date:{{placed}}</p>
+                    <p>Total:{{price}}</p> -->
                     <!-- <p><button onclick="addToCart({{id}})">Add to Cart</button></p> -->
         </div>
     </div>
@@ -46,6 +72,7 @@
 </script>
 </head>
 <body>
-  <h1>Still a placeholder</h1>
+  <script src="public/writeHeader.js"></script>
+  <h1>Order history</h1>
   <div id="ordersdiv"></div>
 </body>

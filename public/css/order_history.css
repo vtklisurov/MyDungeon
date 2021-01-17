@@ -1,0 +1,42 @@
+#ordersdiv {
+    display: flex;
+    /* justify-content: space-between; */
+    flex-wrap: wrap;
+}
+.products {
+    height: 10rem;
+    overflow-y: scroll;
+}
+.product {
+    border-bottom-style: solid;
+}
+.productsLabel {
+    color: white;
+    background-color: black;
+    padding: 2%;
+    font-size: large;
+}
+.row{
+    display: flex;
+    justify-content: space-between;
+    padding-left: 3%;
+    margin-top: 3%;
+}
+/* div.row div:nth-child(1){
+    display: table-cell;
+    display: flex;
+    height: 25px;
+    
+    align-items: center;
+} */
+div.idRow div:nth-child(1){
+    font-size: 180%;
+}
+div.row div:nth-child(2){
+    text-align: right;
+}
+
+h1{
+    margin-left: 10px;
+}
+/* .card */
