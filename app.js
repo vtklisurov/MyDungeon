@@ -121,11 +121,11 @@ app.post('/productControls', function(request, response) {
             response.end();
         }
         if (fields.form === 'update') {
-            await productControls.update(fields, files);
+            response.sent (await productControls.update(fields, files));
         } else if (fields.form === 'add') {
-            await productControls.add(fields, files);
+            response.send(await productControls.add(fields, files));
         } else if (fields.form === 'delete') {
-            await productControls.remove(fields);
+            response.send (await productControls.remove(fields));
         }
         response.end();
     });

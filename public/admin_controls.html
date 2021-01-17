@@ -29,6 +29,7 @@
           alert("The ID, price and stock must be numbers")
         } else {
           $('#update').ajaxSubmit();
+		  document.getElementById("update").reset();
         }
       }
     }
@@ -48,12 +49,14 @@
           alert("Price and stock must be numbers")
         } else {
           $('#add').ajaxSubmit();
+		  document.getElementById("add").reset();
         }
       }
     }
 
     function submitDelete(){
        $('#delete').ajaxSubmit();
+	   document.getElementById("delete").reset();
     }
 
     $(document).ready(function(){

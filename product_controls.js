@@ -43,6 +43,7 @@ function update (toUpdate, files) {
 }
 
 function add (toAdd, files) {
+
   var client = new Client({
     connectionString: connectionString
   });
@@ -52,7 +53,7 @@ function add (toAdd, files) {
       console.log('From the adding:');
       console.log(err);
       return 'Error in the database';
-    } else return 'Success';
+    }
     var ext;
     var pic;
     if (files.pic) {
