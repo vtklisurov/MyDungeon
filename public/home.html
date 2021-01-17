@@ -79,11 +79,11 @@
         {{#prod}}
         <div class="column">
             <div class="card">
-                <img src="{{img}}" alt={{name}} style="width:100%">
-                <p style="font-size: 30px"><b>{{name}}</b>
+                <div class="card-image"><img src="{{img}}" alt={{name}} style="width:100%"></div>
+                <p class="card-title" style="font-size: 30px"><b>{{name}}</b>
                     <p>
                         <p class="price">${{price}}</p>
-                        <p>{{description}}</p>
+                        <p class="card-description">{{description}}</p>
                         <p><button onclick="addToCart({{id}})">Add to Cart</button></p>
             </div>
         </div>
