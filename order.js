@@ -160,7 +160,8 @@ async function history (user) {
 	
     client.connect();
     try {
-        var result = await client.query('select * from order_products inner join orders on orders.id = order_products.order_id join products on order_products.product_id = products.id where user_id = $1', [uid]);
+        var result = await client.query('select order_products.order_id, order_products.product_id, order_products.quantity, order_products.price, products.name, orders.placed::text from order_products inner join orders on orders.id = order_products.order_id join products on order_products.product_id = products.id where user_id = $1', [uid]);
+		//var result = await client.query('select * from order_products inner join orders on orders.id = order_products.order_id join products on order_products.product_id = products.id where user_id = $1', [uid]);
     } catch (err) {
         return err.message;
     }
@@ -191,7 +192,7 @@ async function history (user) {
 			} else { 
 			}
 		}
-        obj.order[i].placed = result.rows[i].placed;
+        obj.order[i].placed = result.rows[i].placed.substring(0,19);
 		obj.order[i].price = order_price;
 		var newArray = obj.order[i].products.filter(value => Object.keys(value).length !== 0);
 		obj.order[i].products = newArray;
