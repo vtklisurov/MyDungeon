@@ -1,0 +1,41 @@
+#controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+
+    height: 50rem;
+}
+
+form {
+    color: white;
+    background-color: black;
+
+    padding: 3%;
+    padding-top: 1%;
+    padding-right: 10%;
+    margin: 2%;
+
+    min-width: 360px;
+
+    border-radius: 1rem;
+}
+
+.inputField {
+    width: 100%;
+    border: none;
+
+    border-radius: 1rem;
+    padding: 2%;
+
+    font-size: medium;
+}
+.button {
+    margin-top: 5%;
+}
+
+/* .file {
+    all: none;
+
+    background-color: white;
+} */
