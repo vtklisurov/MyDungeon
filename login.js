@@ -21,6 +21,16 @@ async function checkLogin (username, pass) {
     }
   } else {
     result = await client.query('SELECT pass FROM staff WHERE username=$1', [username]);
+	if(result.rowCount !== 0){
+		 res = await bcrypt.compare(pass, result.rows[0].pass);
+		if (res) {
+			client.query('UPDATE ONLY staff SET last_login=NOW() WHERE username=$1', [username]);
+			return 'Admin';
+		}
+	} else {
+		return ('Username and password do not match');
+	}
+	
     res = await bcrypt.compare(pass, result.rows[0].pass);
     if (res) {
       client.query('UPDATE ONLY staff SET last_login=NOW() WHERE username=$1', [username]);
