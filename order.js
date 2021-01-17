@@ -188,9 +188,8 @@ async function history (user) {
 				obj.order[i].products[j].name = result.rows[j].name;
 				obj.order[i].products[j].price = result.rows[j].price/100;			
 				obj.order[i].products[j].quantity = result.rows[j].quantity;
-				order_price += (result.rows[j].price*obj.order[i].products[j].quantity)/100;
-			} else { 
-			}
+				order_price += result.rows[j].price/100;
+			} 
 		}
         obj.order[i].placed = result.rows[i].placed.substring(0,19);
 		obj.order[i].price = order_price;
