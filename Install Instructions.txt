@@ -1,22 +1,22 @@
 Install Python
 
 Install node.js: https://nodejs.org/en/
-	Install necessary packages by running these commands in the Terminal/Command Prompt (I think that's all of them):
+	Install necessary packages by running this command in the Terminal/Command Prompt:
 		npm i async bcrypt@5.0.0 body-parser connect-redis express express-session md5 mv node-postgres@latest node-schedule nodemailer paypal-rest-sdk pg@latest pg-promise@latest redis redis-server  
 		 
 	
 Install PostgreSQL: https://www.postgresql.org/download/
 	Create a new database
-	In PgAdmin4 click Tools->Restore and select the store_db file (hope this works)
+	In PgAdmin4 click Tools->Restore and select the store_db file
 	
 Open connector.js and edit the connection string to match the credentials for your database. 
 'postgresql://<username>:<pass>@<server>:<port>/<db_name>'
-(please don't push that to master)
+
 
 Install redis server: windows - https://github.com/microsoftarchive/redis/releases/tag/win-3.0.504
 	Check the checkbox to add the install path to the PATH variable during install.
 	
-Open mail_credentials.js and input the details of the mail account the account verification email will be send from (please don't push to origin)
+Open mail_credentials.js and input the details of the mail account the account verification email will be send from
 	
 Open the Terminal/Command Prompt in the root directory of the site and run the command "node app.js". This will get the server running. 
 (Should be running at all times for the site to work. Needs to be reran if server files are edited)
