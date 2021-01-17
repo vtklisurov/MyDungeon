@@ -52,7 +52,7 @@ console.log("hashing pass");
 	
     client.connect();
     if (isAdmin) {
-      client.query('INSERT INTO staff (staff_id, username, pass, fname, lname, email) VALUES ((select COALESCE(max(staff_id),0) from staff)+1, $1,$2,$3,$4,$5)', [username, hashedpass, fname, lname, email], function (err, result) {
+      client.query('INSERT INTO staff (staff_id, username, pass, fname, lname, email) OVERRIDING SYSTEM VALUE VALUES ((select COALESCE(max(staff_id),0) from staff)+1, $1,$2,$3,$4,$5)', [username, hashedpass, fname, lname, email], function (err, result) {
         if (err) {
           console.log(err);
           return 'Error in the database';
@@ -61,7 +61,7 @@ console.log("hashing pass");
       });
     } else {
 		console.log("inserting into db");
-      client.query('INSERT INTO users (user_id, username, pass, fname, lname, email, hash) VALUES ((select COALESCE(max(user_id),0) from users)+1, $1,$2,$3,$4,$5,$6)', [username, hashedpass, fname, lname, email, hash], function (err, result) {
+      client.query('INSERT INTO users (user_id, username, pass, fname, lname, email, hash) OVERRIDING SYSTEM VALUE VALUES ((select COALESCE(max(user_id),0) from users)+1, $1,$2,$3,$4,$5,$6)', [username, hashedpass, fname, lname, email, hash], function (err, result) {
         if (err) {
           console.log(err);
           return 'Error in the database';

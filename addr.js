@@ -16,7 +16,7 @@ async function saveAddr (data, user) {
 
 	var uid = await convert.unameToUid(user);
 	client.connect();
-    await client.query('INSERT INTO addresses(id, user_id,country,postal,city,str_address) VALUES((select COALESCE(max(id),0) from addresses)+1, $1,$2,$3,$4,$5)', [uid, data.country, data.postal, data.city, data.straddr], function (err, result) {
+    await client.query('INSERT INTO addresses(id, user_id,country,postal,city,str_address) OVERRIDING SYSTEM VALUE VALUES((select COALESCE(max(id),0) from addresses)+1 , $1,$2,$3,$4,$5)', [uid, data.country, data.postal, data.city, data.straddr], function (err, result) {
 		if (err) {
 			console.log(err)
 			return 'There was a problem saving the address';

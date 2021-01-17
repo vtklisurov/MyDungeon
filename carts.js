@@ -81,7 +81,7 @@ async function addProduct (pid, user) {
   var cid;
   var result = await client.query('SELECT cart_id FROM carts WHERE user_id=$1', [uid]);
   if (result.rowCount === 0) {
-    result = await client.query('INSERT INTO carts (cart_id, user_id) values ((select COALESCE(max(cart_id),0) from carts)+1, $1) RETURNING cart_id', [uid]);
+    result = await client.query('INSERT INTO carts (cart_id, user_id) OVERRIDING SYSTEM VALUE values ((select COALESCE(max(cart_id),0) from carts)+1, $1) RETURNING cart_id', [uid]);
     cid = result.rows[0].cart_id;
   } else if (result.rowCount !== 1) {
     var err = Error('Repeating cart_id');
@@ -101,7 +101,7 @@ async function addProduct (pid, user) {
 
   result = await client.query('SELECT * FROM cart_products WHERE cart_id=$1 AND product_id=$2', [cid, pid]);
   if (result.rowCount === 0) {
-    await client.query('INSERT INTO cart_products (cart_id, product_id, price) VALUES ($1,$2,$3)', [cid, pid, price]);
+    await client.query('INSERT INTO cart_products (cart_id, product_id, price) OVERRIDING SYSTEM VALUE VALUES ($1,$2,$3)', [cid, pid, price]);
   } else {
     await client.query('UPDATE cart_products SET quantity=quantity+1 WHERE cart_id=$1 AND product_id=$2', [cid, pid]);
   }
