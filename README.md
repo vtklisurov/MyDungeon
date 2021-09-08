@@ -1,3 +1,3 @@
 # MyDungeon
 
-A basic internet store for my web development class
+A basic internet store a couple of friends and I developed for our web development class
